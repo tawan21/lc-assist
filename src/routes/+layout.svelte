@@ -3,6 +3,6 @@
 </script>
 
 <Navbar />
-<div class="flex justify-center p-10">
+<div class="flex justify-center p-5">
     <slot />
 </div>
