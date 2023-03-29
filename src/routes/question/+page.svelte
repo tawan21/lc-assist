@@ -9,7 +9,7 @@
         id: 71,
         name: "Python (3.8.1)",
         label: "Python (3.8.1)",
-        value: "python",
+        value: "python3",
       },
       {
         id: 53,
@@ -60,7 +60,6 @@
     {#key bpc}
       <EditorWindow {lang} code={bpc} />
     {/key}
-    {bpc}
   </div>
 </div>
 

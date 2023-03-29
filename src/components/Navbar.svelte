@@ -1,13 +1,13 @@
 <script>
   import { auth, googleProvider } from "../firebase";
   import { signInWithPopup, signOut, GoogleAuthProvider } from "firebase/auth";
-  import { user } from "../stores";
-  import { onDestroy } from "svelte";
+  import { onMount } from "svelte";
 
-  let u = null;
+  let user, loggedIn;
 
-  user.subscribe((val) => {
-    u = val;
+  onMount(() => {
+    user = sessionStorage.getItem(user)
+    loggedIn = user !== null
   });
 
   const login = () => {
@@ -18,8 +18,8 @@
         const token = credential.accessToken;
         // The signed-in user info.
         const usr = result.user;
-        console.log(usr);
-        user.set(usr);
+        sessionStorage.user = JSON.stringify(usr);
+        loggedIn = true;
         // IdP data available using getAdditionalUserInfo(result)
         // ...
       })
@@ -38,7 +38,8 @@
   const logout = () => {
     signOut(auth)
       .then(() => {
-        user.set(null);
+        loggedIn = false;
+        sessionStorage.removeItem("user");
       })
       .catch((error) => {
         console.log(error);
@@ -142,7 +143,7 @@
         <!-- Profile dropdown -->
         <div class="relative ml-3">
           <div>
-            {#if u}
+            {#if loggedIn}
               <button
                 type="button"
                 class="flex text-white rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"

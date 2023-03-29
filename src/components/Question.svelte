@@ -28,7 +28,7 @@
   >
     {question.questionFrontendId}. {question.questionTitle} ({question.difficulty})
   </h5>
-  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 overflow-x-scroll">
+  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
     {@html question.content}
   </p>
 </div>

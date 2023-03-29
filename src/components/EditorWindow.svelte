@@ -23,7 +23,7 @@
 
   loader.init().then((monaco) => {
     monaco.editor.create(editor, {
-      language: lang.value,
+      language: lang.value === "python3" ? "python" : lang.value,
       value: code,
       theme: "vs-dark",
     });
