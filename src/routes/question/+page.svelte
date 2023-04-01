@@ -29,7 +29,7 @@
     $: bpc = code ? Object.values(code)[1] : ""
 </script>
 
-<div class="flex flex-col">
+<div class="flex flex-col min-w-full">
   <input
     type="text"
     class="shadow mb-3 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -58,7 +58,7 @@
       </select>
     </div>
     {#key bpc}
-      <EditorWindow {lang} code={bpc} />
+      <EditorWindow {lang} code={bpc} {ques} />
     {/key}
   </div>
 </div>

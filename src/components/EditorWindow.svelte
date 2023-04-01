@@ -1,9 +1,24 @@
 <script>
   import loader from "@monaco-editor/loader";
+  import { collection, doc, onSnapshot, serverTimestamp, setDoc } from "firebase/firestore";
+  import { onMount } from "svelte";
+  import { db } from "../firebase";
 
-  export let lang, code;
+  export let user, lang, code, ques;
 
   let editor = null;
+
+  onMount(() => {
+    user = JSON.parse(sessionStorage.user);
+    storeCode();
+  });
+
+  const storeCode = async () => {
+    await setDoc(doc(db, `snippets/${user.email}/${ques}/${lang}`), {
+      code: code,
+      updated: serverTimestamp(),
+    });
+  };
 
   const onChange = (action, data) => {
     switch (action) {

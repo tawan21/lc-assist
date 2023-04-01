@@ -69,25 +69,6 @@
           class="bg-blue-500 mb-3 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           on:click={linkLeetcode}>Link</button
         >
-      {:else}
-        <button
-          type="button"
-          class="bg-blue-500 mb-3 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          on:click={getLeetcodeInfo}>Fetch</button
-        >
-        {#if lcData}
-          <img
-            alt="avatar"
-            class="w-24 h-24 mb-3 rounded-xl shadow-lg"
-            src={lcData.avatar}
-          />
-          <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">
-            @{lcData.username}
-          </h5>
-          <span class="text-sm text-gray-500 dark:text-gray-400"
-            >user {lcData.userId}</span
-          >
-        {/if}
       {/if}
     {/if}
   </div>

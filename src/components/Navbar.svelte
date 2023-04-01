@@ -3,11 +3,10 @@
   import { signInWithPopup, signOut, GoogleAuthProvider } from "firebase/auth";
   import { onMount } from "svelte";
 
-  let user, loggedIn;
+  let loggedIn;
 
   onMount(() => {
-    user = sessionStorage.getItem(user)
-    loggedIn = user !== null
+    loggedIn = sessionStorage.getItem("user") !== null;
   });
 
   const login = () => {

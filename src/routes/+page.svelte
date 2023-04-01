@@ -5,32 +5,61 @@
   import Contest from "../components/Contest.svelte";
   import Submissions from "../components/Submissions.svelte";
   import Progress from "../components/Progress.svelte";
+  import { onMount } from "svelte";
+  import { doc, getDoc } from "firebase/firestore";
+  import { db } from "../firebase";
 
-  let user = "",
-    clicked = false;
+  let user = null,
+    session = null,
+    lcData = null;
+
+  const getLeetcodeInfo = async () => {
+    const response = await axios.get(
+      `http://localhost:3000/api/lc/user/${session}`
+    );
+
+    lcData = response.data.userStatus;
+    user = lcData.username;
+  };
+
+  const getSession = async () => {
+    const u = JSON.parse(sessionStorage.user);
+    const d = await getDoc(doc(db, "lc-session", u.email));
+    if (d.exists()) {
+      session = d.data().leetcodeSession;
+      getLeetcodeInfo();
+    }
+  };
+
+  onMount(() => {
+    getSession();
+  });
 </script>
 
-<div class="flex flex-col">
-  <h2 class="text-2xl mb-3 font-semibold underline">Enter username:</h2>
-  <input
-    type="text"
-    class="shadow mb-3 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-    placeholder="@"
-    bind:value={user}
-  />
-  <button
-    type="button"
-    class="bg-blue-500 mb-3 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-    on:click={() => {
-      clicked = !clicked;
-    }}>Fetch</button
+<div class="flex flex-col min-w-full">
+  <div
+    class="min-w-full mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
   >
-  <div>
-    {#key clicked}
+    <div class="flex flex-col items-center pb-10 space-y-5">
+      {#if lcData}
+        <img
+          alt="avatar"
+          class="w-24 h-24 mb-3 rounded-full shadow-lg"
+          src={lcData.avatar}
+        />
+        <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">
+          @{user}
+        </h5>
+        <span class="text-sm text-gray-500 dark:text-gray-400"
+          >#{lcData.userId}</span
+        >
+      {/if}
+    </div>
+    {#if user}
       <Contest {user} />
       <Progress {user} />
       <Submissions {user} />
-    {/key}
+    {/if}
   </div>
 </div>
 
