@@ -24,9 +24,12 @@
         value: "java",
       },
     ],
-    lang = languages[0], snippet  = "";
-    $: code = Object.values(snippet).filter((obj) => obj.langSlug === lang.value)[0];
-    $: bpc = code ? Object.values(code)[1] : ""
+    lang = languages[0],
+    snippet = "";
+  $: code = Object.values(snippet).filter(
+    (obj) => obj.langSlug === lang.value
+  )[0];
+  $: bpc = code ? Object.values(code)[1] : "";
 </script>
 
 <div class="flex flex-col min-w-full">
@@ -45,7 +48,7 @@
   >
   <div class="flex space-y-4 flex-col items-center justify-center">
     {#key clicked}
-      <Question bind:snippet={snippet} {ques} />
+      <Question bind:snippet {ques} />
     {/key}
     <div class="flex items-center justify-center">
       <select
@@ -58,7 +61,7 @@
       </select>
     </div>
     {#key bpc}
-      <EditorWindow {lang} code={bpc} {ques} />
+      <EditorWindow {lang} {bpc} {ques} />
     {/key}
   </div>
 </div>
