@@ -1,6 +1,5 @@
 <script>
   import axios from "axios";
-  import "../app.css";
   import Navbar from "../components/Navbar.svelte";
   import Contest from "../components/Contest.svelte";
   import Submissions from "../components/Submissions.svelte";

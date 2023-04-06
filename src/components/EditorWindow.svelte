@@ -59,6 +59,10 @@
         value: code,
         theme: "vs-dark",
       });
+
+      edt.onDidChangeModelContent(() => {
+        code = edt.getValue();
+      });
     });
   });
 
@@ -86,14 +90,11 @@
     clearTimeout(timer);
     timer = setTimeout(() => {
       done = true;
-      edt.onDidChangeModelContent(() => {
-        code = edt.getValue();
-        if (code !== oldCode) {
-          console.log(code);
-          storeCode();
-          oldCode = code;
-        }
-      });
+      if (code !== oldCode) {
+        console.log(code);
+        storeCode();
+        oldCode = code;
+      }
     }, 1000);
   };
 </script>
