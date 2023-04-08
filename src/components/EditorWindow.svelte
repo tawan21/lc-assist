@@ -17,6 +17,7 @@
     code = "",
     oldCode = "",
     exists = false,
+    u = "",
     edt = null,
     unsubscribe = null,
     timer = null,
@@ -24,7 +25,7 @@
 
   const getSnapshot = () => {
     unsubscribe = onSnapshot(
-      doc(db, `snippets/${user.email}/${ques}/${lang.value}`),
+      doc(db, `snippets/${user}/${ques}/${lang.value}`),
       (doc) => {
         code = doc.data().code;
         if (code !== oldCode) {
@@ -40,7 +41,7 @@
 
   const getCode = async () => {
     const docSnap = await getDoc(
-      doc(db, `snippets/${user.email}/${ques}/${lang.value}`)
+      doc(db, `snippets/${user}/${ques}/${lang.value}`)
     );
     if (docSnap.exists()) {
       exists = true;
@@ -50,7 +51,7 @@
   };
 
   onMount(async () => {
-    user = JSON.parse(sessionStorage.user);
+    u = JSON.parse(sessionStorage.user).email;
     await getCode();
     if (exists) getSnapshot();
     loader.init().then((monaco) => {
@@ -72,10 +73,11 @@
 
   const storeCode = async () => {
     await setDoc(
-      doc(db, `snippets/${user.email}/${ques}/${lang.value}`),
+      doc(db, `snippets/${user}/${ques}/${lang.value}`),
       {
         code: code,
         updated: new Date(),
+        editBy: u,
       },
       { merge: true }
     );
