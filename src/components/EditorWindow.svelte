@@ -11,10 +11,9 @@
   import { onDestroy, onMount } from "svelte";
   import { db } from "../firebase";
 
-  export let user, lang, bpc, ques;
+  export let user, lang, bpc, ques, code = "";
 
   let editor = null,
-    code = "",
     oldCode = "",
     exists = false,
     u = "",

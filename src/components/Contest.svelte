@@ -31,9 +31,11 @@
     Contest Stats
   </h5>
   <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-    {#each Object.entries(contestStats) as [key, value]}
-      <p>{key}</p>
-      <p class="mb-2 text-3xl font-extrabold">{value}</p>
-    {/each}
+    {#if contestStats}
+      {#each Object.entries(contestStats) as [key, value]}
+        <p>{key}</p>
+        <p class="mb-2 text-3xl font-extrabold">{value}</p>
+      {/each}
+    {/if}
   </p>
 </div>

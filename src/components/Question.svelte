@@ -2,9 +2,7 @@
   import axios from "axios";
   import { onMount } from "svelte";
 
-  export let ques, snippet;
-
-  let question = {};
+  export let ques, snippet, question;
 
   onMount(() => {
     getQuestion();

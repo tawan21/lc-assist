@@ -13,33 +13,30 @@
 
   let user,
     leet_sesh,
-    sesh,
-    needC = false,
-    lcData;
+    leet_csrf,
+    needC = false;
 
-  onMount(() => {
+  onMount(async () => {
     user = JSON.parse(sessionStorage.user);
-    getSession();
+    await getSession();
+    sessionStorage.session = leet_sesh;
+    sessionStorage.csrf = leet_csrf;
   });
 
   const linkLeetcode = async () => {
     await setDoc(doc(db, "lc-session", user.email), {
       leetcodeSession: leet_sesh,
+      leetcodeCsrf: leet_csrf,
     });
   };
 
   const getSession = async () => {
     const d = await getDoc(doc(db, "lc-session", user.email));
-    if (d.exists()) sesh = d.data().leetcodeSession;
-    else needC = true;
-  };
-
-  const getLeetcodeInfo = async () => {
-    const response = await axios.get(
-      `http://localhost:3000/api/lc/user/${sesh}`
-    );
-
-    lcData = response.data.userStatus;
+    if (d.exists()) {
+      const dt = d.data();
+      leet_sesh = dt.leetcodeSession;
+      leet_csrf = dt.leetcodeCsrf;
+    } else needC = true;
   };
 </script>
 
@@ -63,6 +60,12 @@
           class="shadow mb-3 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           placeholder="LEETCODE_SESSION cookie"
           bind:value={leet_sesh}
+        />
+        <input
+          type="text"
+          class="shadow mb-3 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          placeholder="csrftoken cookie"
+          bind:value={leet_csrf}
         />
         <button
           type="button"

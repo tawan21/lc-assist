@@ -20,6 +20,17 @@
 
     submissions = response.data.recentAcSubmissionList;
   };
+
+  const timeElapsed = (timestamp) => {
+    const dt = new Date(parseInt(timestamp * 1000));
+    return `submitted ${dt.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+    })}, ${dt.toLocaleString("en-US", {
+      month: "long",
+      day: "numeric",
+    })}`;
+  };
 </script>
 
 <div
@@ -34,7 +45,7 @@
     {#each Object.entries(submissions) as [_, value]}
       <div class="mb-3">
         <p class="text-xl font-extrabold">{value.title}</p>
-        <p>{Math.round((now - new Date(parseInt(value.timestamp)) * 1000) / 3600000)} hours ago</p>
+        <p>{timeElapsed(value.timestamp)}</p>
       </div>
     {/each}
   </p>

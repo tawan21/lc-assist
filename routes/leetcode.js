@@ -1,6 +1,7 @@
 import express from "express";
 import { body, validationResult } from "express-validator";
 const router = express.Router();
+import axios from "axios";
 
 router.get("/contest_stats/:user", async (req, res) => {
   try {
@@ -143,7 +144,7 @@ router.get("/question/:title", async (req, res) => {
       },
       referrer: `https://leetcode.com/`,
       referrerPolicy: "strict-origin-when-cross-origin",
-      body: `{"operationName":"getQuestionDetail","variables":{"titleSlug":"${req.params.title}"},"query":"query getQuestionDetail($titleSlug: String!) {\
+      body: `{"operationName":"questionData","variables":{"titleSlug":"${req.params.title}"},"query":"query questionData($titleSlug: String!) {\
         question(titleSlug: $titleSlug) {\
           questionId\
           questionFrontendId\
@@ -156,7 +157,7 @@ router.get("/question/:title", async (req, res) => {
           stats\
           similarQuestions\
           categoryTitle\
-          sampleTestCase\
+          exampleTestcases\
           enableTestMode\
           codeSnippets{\
             langSlug\
@@ -224,6 +225,75 @@ router.get("/user/:cookie", async (req, res) => {
     });
     response = await response.json()
     res.send(response.data)
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+})
+
+const getOutput = async (id, prob) => {
+  try {
+    const response = await axios.get(`https://leetcode.com/submissions/detail/${id}/check`, {
+      headers: {
+        'Referer': `https://leetcode.com/problems/${prob}/`,
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': 'MGo78UjFByPCYHposdG8AamXrRuxNzWXIYvtOb862Uh1OWYNCyDLAfBFLyrEj8qC',
+        'Cookie': `csrftoken=MGo78UjFByPCYHposdG8AamXrRuxNzWXIYvtOb862Uh1OWYNCyDLAfBFLyrEj8qC;LEETCODE_SESSION=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50X3ZlcmlmaWVkX2VtYWlsIjpudWxsLCJhY2NvdW50X3VzZXIiOiI1aTJicSIsIl9hdXRoX3VzZXJfaWQiOiI5MjQwOTAyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiYWxsYXV0aC5hY2NvdW50LmF1dGhfYmFja2VuZHMuQXV0aGVudGljYXRpb25CYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiYzY1OWJiZjQxZTQ4OTIzYjIxMzBiNWZhM2FkYWY5OWM5NzcyMzU4YSIsImlkIjo5MjQwOTAyLCJlbWFpbCI6ImFub242OWZAZ21haWwuY29tIiwidXNlcm5hbWUiOiJhbm9ubm9uYW5vbiIsInVzZXJfc2x1ZyI6ImFub25ub25hbm9uIiwiYXZhdGFyIjoiaHR0cHM6Ly9zMy11cy13ZXN0LTEuYW1hem9uYXdzLmNvbS9zMy1sYy11cGxvYWQvYXNzZXRzL2RlZmF1bHRfYXZhdGFyLmpwZyIsInJlZnJlc2hlZF9hdCI6MTY4MTAyOTk2MCwiaXAiOiIxMDMuNjYuMjA2LjMiLCJpZGVudGl0eSI6ImMzZmNkOWU1MmZkNzc1YzQzYzk1NTNhOTYxYmZjNTJjIiwic2Vzc2lvbl9pZCI6Mzc4MjA1NzN9.-hX5Ml5n_cB5Qae6yEWETr5B3CmfOeE4iEhD_JHfh9g;`
+      },
+      withCredentials: false
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+router.post("/interpret/:title", async (req, res) => {
+  try {
+    const response = await axios.post(`https://leetcode.com/problems/${req.params.title}/interpret_solution/`, req.body, {
+      headers: {
+        'Referer': `https://leetcode.com/problems/${req.params.title}/`,
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': req.get("csrf_token"),
+        'Cookie': `csrftoken=${req.get("csrf_token")};LEETCODE_SESSION=${req.get("session_id")};`
+      },
+      withCredentials: false
+    });
+
+    let result = null, ct = 5;
+
+    do {
+      --ct;
+      result = await getOutput(response.data.interpret_id, req.params.title)
+    } while (result.state === "PENDING" || ct > 0);
+
+    res.send(result);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+})
+
+router.post("/submit/:title", async (req, res) => {
+  try {
+    const response = await axios.post(`https://leetcode.com/problems/${req.params.title}/submit/`, req.body, {
+      headers: {
+        'Referer': `https://leetcode.com/problems/${req.params.title}/submissions/`,
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': req.get("csrf_token"),
+        'Cookie': `csrftoken=${req.get("csrf_token")};LEETCODE_SESSION=${req.get("session_id")};`
+      },
+      withCredentials: false
+    });
+
+    let result = null, ct = 5;
+
+    do {
+      --ct;
+      result = await getOutput(response.data.submission_id, req.params.title)
+    } while (result.state === "PENDING" || ct > 0);
+
+    res.send(result);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Internal Server Error");

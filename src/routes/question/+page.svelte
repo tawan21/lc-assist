@@ -4,6 +4,7 @@
   import Question from "../../components/Question.svelte";
   import { db } from "../../firebase";
   import { onMount } from "svelte";
+  import axios from "axios";
 
   let ques = "",
     clicked = false,
@@ -31,6 +32,9 @@
       },
     ],
     lang = languages[0],
+    question = {},
+    finalCode = "",
+    outputData = null,
     snippet = "";
   $: code = Object.values(snippet).filter(
     (obj) => obj.langSlug === lang.value
@@ -46,6 +50,46 @@
       f.push(doc.data().mail);
     });
     friends = f;
+  };
+
+  const interpret = async () => {
+    const response = await axios.post(
+      `http://localhost:3000/api/lc/interpret/${ques}`,
+      {
+        question_id: question.questionId,
+        lang: lang.value,
+        typed_code: finalCode,
+        judge_type: "large",
+        data_input: question.exampleTestcases,
+      },
+      {
+        headers: {
+          session_id: sessionStorage.session,
+          csrf_token: sessionStorage.csrf,
+        },
+      }
+    );
+
+    outputData = response.data;
+  };
+
+  const submit = async () => {
+    const response = await axios.post(
+      `http://localhost:3000/api/lc/submit/${ques}`,
+      {
+        question_id: question.questionId,
+        lang: lang.value,
+        typed_code: finalCode,
+      },
+      {
+        headers: {
+          session_id: sessionStorage.session,
+          csrf_token: sessionStorage.csrf,
+        },
+      }
+    );
+
+    outputData = response.data;
   };
 
   onMount(async () => {
@@ -71,7 +115,7 @@
   >
   <div class="flex space-y-4 flex-col items-center justify-center">
     {#key clicked}
-      <Question bind:snippet {ques} />
+      <Question bind:snippet {ques} bind:question />
     {/key}
     <div class="flex items-center space-x-2">
       <select
@@ -93,9 +137,62 @@
     </div>
     {#key bpc}
       {#key coder}
-        <EditorWindow {lang} {bpc} {ques} user={coder} />
+        <EditorWindow {lang} {bpc} {ques} bind:code={finalCode} user={coder} />
+        <textarea
+          rows={5}
+          placeholder={"Custom Input"}
+          bind:value={question.exampleTestcases}
+          class="focus:outline-none w-full resize-none border-2 border-black z-10 rounded-md shadow-md px-4 py-2 hover:shadow-lg transition duration-150 bg-white mt-2"
+        />
       {/key}
     {/key}
+    <div>
+      <button
+        type="button"
+        class="bg-gray-500 mb-3 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        on:click={interpret}>Run Code</button
+      >
+      <button
+        type="button"
+        class="bg-white uppercase mb-3 hover:bg-gray-100 hover:text-green-500 text-blue-500 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        on:click={submit}>Submit</button
+      >
+    </div>
+    <div class="flex flex-col space-y-2 min-w-full">
+      <span class="font-semibold text-xl">Output:</span>
+      <div
+        class="w-full h-56 bg-[#1e293b] rounded-md text-white font-normal text-sm overflow-y-auto p-2"
+      >
+        {#if outputData}
+          {#if "code_answer" in outputData}
+            {#if outputData.run_success}
+              {#each outputData.code_answer as tc}
+                <p class="text-lg font-semibold">{tc}</p>
+              {/each}
+            {:else}
+              <p>{outputData.full_runtime_error}</p>
+            {/if}
+          {:else if outputData.run_success}
+            <p class="text-lg font-semibold text-green-400">
+              {outputData.status_msg}
+            </p>
+            <p class="font-semibold">
+              {outputData.total_correct} / {outputData.total_testcases} test cases
+              passed
+            </p>
+          {:else}
+            <p class="text-lg font-semibold text-red-500">
+              {outputData.status_msg}
+            </p>
+            <p>{outputData.full_runtime_error}</p>
+            <p class="font-semibold">
+              {outputData.total_correct} / {outputData.total_testcases} test cases
+              passed
+            </p>
+          {/if}
+        {/if}
+      </div>
+    </div>
   </div>
 </div>
 
