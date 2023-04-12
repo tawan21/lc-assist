@@ -49,6 +49,7 @@
   };
 
   onMount(async () => {
+    if (!sessionStorage.getItem("user")) return;
     user = JSON.parse(sessionStorage.user);
     await getFriends();
   });

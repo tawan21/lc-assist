@@ -93,6 +93,7 @@
   };
 
   onMount(async () => {
+    if (!sessionStorage.getItem("user")) return;
     user = JSON.parse(sessionStorage.user);
     coder = user.email;
     await getFriends();
@@ -102,7 +103,7 @@
 <div class="flex flex-col min-w-full">
   <input
     type="text"
-    class="shadow mb-3 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+    class="bg-gray-300 focus:bg-gray-200 shadow mb-3 appearance-none border-0 rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
     placeholder="Slug"
     bind:value={ques}
   />
@@ -142,7 +143,7 @@
           rows={5}
           placeholder={"Custom Input"}
           bind:value={question.exampleTestcases}
-          class="focus:outline-none w-full resize-none border-2 border-black z-10 rounded-md shadow-md px-4 py-2 hover:shadow-lg transition duration-150 bg-white mt-2"
+          class="focus:outline-none w-full resize-none border-2 border-black z-10 rounded-md shadow-md px-4 py-2 hover:shadow-lg transition duration-150 bg-gray-300 hover:bg-gray-200 mt-2"
         />
       {/key}
     {/key}
@@ -154,7 +155,7 @@
       >
       <button
         type="button"
-        class="bg-white uppercase mb-3 hover:bg-gray-100 hover:text-green-500 text-blue-500 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        class="bg-gray-300 uppercase mb-3 hover:bg-gray-200 hover:text-green-500 text-blue-500 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         on:click={submit}>Submit</button
       >
     </div>
@@ -198,6 +199,6 @@
 
 <style lang="postcss">
   :global(html) {
-    background-color: theme(colors.gray.300);
+    background-color: theme(colors.gray.100);
   }
 </style>

@@ -11,7 +11,11 @@
   import { onDestroy, onMount } from "svelte";
   import { db } from "../firebase";
 
-  export let user, lang, bpc, ques, code = "";
+  export let user,
+    lang,
+    bpc,
+    ques,
+    code = "";
 
   let editor = null,
     oldCode = "",
@@ -26,11 +30,13 @@
     unsubscribe = onSnapshot(
       doc(db, `snippets/${user}/${ques}/${lang.value}`),
       (doc) => {
+        const lastPos = edt.getPosition();
         code = doc.data().code;
         if (code !== oldCode) {
           console.log(code);
           if (done) {
             edt.getModel().setValue(code);
+            edt.setPosition(lastPos);
             oldCode = code;
           }
         }
@@ -50,6 +56,7 @@
   };
 
   onMount(async () => {
+    if (!sessionStorage.getItem("user")) return;
     u = JSON.parse(sessionStorage.user).email;
     await getCode();
     if (exists) getSnapshot();
@@ -58,6 +65,7 @@
         language: lang.value === "python3" ? "python" : lang.value,
         value: code,
         theme: "vs-dark",
+        "bracketPairColorization.enabled": true,
       });
 
       edt.onDidChangeModelContent(() => {

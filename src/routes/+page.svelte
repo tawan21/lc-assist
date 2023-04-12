@@ -31,7 +31,7 @@
   };
 
   onMount(() => {
-    getSession();
+    if (sessionStorage.getItem("user")) getSession();
   });
 </script>
 
@@ -64,6 +64,6 @@
 
 <style lang="postcss">
   :global(html) {
-    background-color: theme(colors.gray.300);
+    background-color: theme(colors.gray.200);
   }
 </style>
