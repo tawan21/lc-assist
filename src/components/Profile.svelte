@@ -74,6 +74,10 @@
           on:click={linkLeetcode}>Link</button
         >
       {/if}
+    {:else}
+      <h5 class="text-xl font-medium text-gray-900 dark:text-white">
+        User NOT logged in
+      </h5>
     {/if}
   </div>
 </div>
