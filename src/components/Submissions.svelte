@@ -2,13 +2,16 @@
   import { onMount } from "svelte";
   import axios from "axios";
   import "../app.css";
+  import { Circle } from "svelte-loading-spinners";
 
   export let user;
 
-  let submissions = {};
+  let submissions = {},
+    loading = true;
 
-  onMount(() => {
-    getSubmissions();
+  onMount(async () => {
+    await getSubmissions();
+    loading = false;
   });
 
   const now = new Date();
@@ -42,11 +45,15 @@
     Recent AC Submissions
   </h5>
   <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-    {#each Object.entries(submissions) as [_, value]}
-      <div class="mb-3">
-        <p class="text-xl font-extrabold">{value.title}</p>
-        <p>{timeElapsed(value.timestamp)}</p>
-      </div>
-    {/each}
+    {#if loading}
+      <Circle color="orange" size="3" unit="rem" />
+    {:else}
+      {#each Object.entries(submissions) as [_, value]}
+        <div class="mb-3">
+          <p class="text-xl font-extrabold">{value.title}</p>
+          <p>{timeElapsed(value.timestamp)}</p>
+        </div>
+      {/each}
+    {/if}
   </p>
 </div>

@@ -2,16 +2,17 @@
   import { onMount } from "svelte";
   import axios from "axios";
   import "../app.css";
+  import { Circle } from "svelte-loading-spinners";
 
   export let user;
 
-  let progress = {};
+  let progress = {},
+    loading = true;
 
-  onMount(() => {
-    getProgress();
+  onMount(async () => {
+    await getProgress();
+    loading = false;
   });
-
-  // const [attended, rating, ranking] = [...contestStats.data.userContestRanking];
 
   const getProgress = async () => {
     const response = await axios.get(
@@ -31,9 +32,13 @@
     Progress
   </h5>
   <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-    {#each Object.entries(progress) as [_, value]}
-      <p>{value.difficulty}</p>
-      <p class="mb-2 text-3xl font-extrabold">{value.count}</p>
-    {/each}
+    {#if loading}
+      <Circle color="orange" size="3" unit="rem" />
+    {:else}
+      {#each Object.entries(progress) as [_, value]}
+        <p>{value.difficulty}</p>
+        <p class="mb-2 text-3xl font-extrabold">{value.count}</p>
+      {/each}
+    {/if}
   </p>
 </div>

@@ -45,6 +45,7 @@
   };
 
   const getCode = async () => {
+    if (!user || !ques) return;
     const docSnap = await getDoc(
       doc(db, `snippets/${user}/${ques}/${lang.value}`)
     );
@@ -61,16 +62,19 @@
     await getCode();
     if (exists) getSnapshot();
     loader.init().then((monaco) => {
-      edt = monaco.editor.create(editor, {
-        language: lang.value === "python3" ? "python" : lang.value,
-        value: code,
-        theme: "vs-dark",
-        "bracketPairColorization.enabled": true,
-      });
+      if (editor) {
+        edt = monaco.editor.create(editor, {
+          language: lang.value === "python3" ? "python" : lang.value,
+          value: code ? code : "print('Pick a Question!')",
+          theme: "vs-dark",
+          fontSize: "17px",
+          "bracketPairColorization.enabled": true,
+        });
 
-      edt.onDidChangeModelContent(() => {
-        code = edt.getValue();
-      });
+        edt.onDidChangeModelContent(() => {
+          code = edt.getValue();
+        });
+      }
     });
   });
 
@@ -79,6 +83,7 @@
   });
 
   const storeCode = async () => {
+    if (!user || !ques) return;
     await setDoc(
       doc(db, `snippets/${user}/${ques}/${lang.value}`),
       {

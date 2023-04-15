@@ -10,18 +10,23 @@
   } from "firebase/firestore";
   import { onMount } from "svelte";
   import { db } from "../firebase";
+  import { Circle } from "svelte-loading-spinners";
 
   let user,
-    leet_sesh,
-    leet_csrf,
-    needC = false;
+    needC = false,
+    leet_sesh = null,
+    leet_csrf = null,
+    loading = false;
 
   onMount(async () => {
     if (!sessionStorage.getItem("user")) return;
     user = JSON.parse(sessionStorage.user);
+    loading = true;
     await getSession();
     sessionStorage.session = leet_sesh;
     sessionStorage.csrf = leet_csrf;
+    needC = !leet_sesh || !leet_csrf;
+    loading = false;
   });
 
   const linkLeetcode = async () => {
@@ -37,7 +42,8 @@
       const dt = d.data();
       leet_sesh = dt.leetcodeSession;
       leet_csrf = dt.leetcodeCsrf;
-    } else needC = true;
+    }
+    loading = false;
   };
 </script>
 
@@ -45,7 +51,9 @@
   class="min-w-full mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
 >
   <div class="flex flex-col items-center pb-10 space-y-5">
-    {#if user}
+    {#if loading}
+      <Circle color="orange" size="3" unit="rem" />
+    {:else if user}
       <img
         alt="avatar"
         class="w-24 h-24 mb-3 rounded-full shadow-lg"
@@ -58,20 +66,21 @@
       {#if needC}
         <input
           type="text"
-          class="shadow mb-3 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          class="shadow mb-3 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline"
           placeholder="LEETCODE_SESSION cookie"
           bind:value={leet_sesh}
         />
         <input
           type="text"
-          class="shadow mb-3 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          class="shadow mb-3 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline"
           placeholder="csrftoken cookie"
           bind:value={leet_csrf}
         />
         <button
           type="button"
-          class="bg-blue-500 mb-3 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          on:click={linkLeetcode}>Link</button
+          class="bg-blue-500 mb-3 hover:enabled:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
+          on:click={linkLeetcode}
+          disabled={leet_sesh === "" || leet_csrf === ""}>Link</button
         >
       {/if}
     {:else}

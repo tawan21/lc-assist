@@ -4,11 +4,15 @@
     import { page } from "$app/stores";
 
     $: pg = $page;
+
+    let loggedIn;
 </script>
 
 {#key pg}
-    <Navbar />
+    <Navbar bind:loggedIn />
 {/key}
 <div class="flex justify-center p-5">
-    <slot />
+    {#key loggedIn}
+        <slot />
+    {/key}
 </div>

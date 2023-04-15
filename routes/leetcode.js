@@ -231,6 +231,41 @@ router.get("/user/:cookie", async (req, res) => {
   }
 })
 
+router.get("/username/:username", async (req, res) => {
+  try {
+    const response = await axios.post(`https://leetcode.com/graphql`, JSON.stringify({
+      "operationName": "userPublicProfile",
+      "query": `query userPublicProfile($username: String!) {
+        matchedUser(username: $username) {
+          githubUrl
+          linkedinUrl
+          profile {
+            ranking
+            realName
+            aboutMe
+            countryName
+          }
+        }
+      }`,
+      "variables": {
+        "username": req.params.username
+      }
+    }), {
+      headers: {
+        'Referer': `https://leetcode.com/${req.params.username}/`,
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/json'
+      },
+      withCredentials: false
+    });
+
+    res.send(response.data);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+})
+
 const getOutput = async (id, prob) => {
   try {
     const response = await axios.get(`https://leetcode.com/submissions/detail/${id}/check`, {
@@ -291,7 +326,7 @@ router.post("/submit/:title", async (req, res) => {
     do {
       --ct;
       result = await getOutput(response.data.submission_id, req.params.title)
-    } while (result.state === "PENDING" || ct > 0);
+    } while (result.state !== "SUCCESS" || ct > 0);
 
     res.send(result);
   } catch (error) {

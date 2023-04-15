@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import router from "./routes/leetcode.js"
+import router from "./routes/leetcode.js";
 
 const app = express();
 app.use(cors());

@@ -5,9 +5,10 @@
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
 
-  let loggedIn,
-    expanded = false,
+  let expanded = false,
     pg = "";
+
+  export let loggedIn;
 
   onMount(() => {
     loggedIn = sessionStorage.getItem("user") !== null;
@@ -23,7 +24,7 @@
         const usr = result.user;
         sessionStorage.user = JSON.stringify(usr);
         loggedIn = true;
-        goto("/question");
+        goto("/profile");
         // IdP data available using getAdditionalUserInfo(result)
         // ...
       })
@@ -44,7 +45,7 @@
       .then(() => {
         loggedIn = false;
         sessionStorage.removeItem("user");
-        goto("/question");
+        goto("/profile");
       })
       .catch((error) => {
         console.log(error);

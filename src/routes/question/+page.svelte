@@ -5,11 +5,13 @@
   import { db } from "../../firebase";
   import { onMount } from "svelte";
   import axios from "axios";
+  import { Circle } from "svelte-loading-spinners";
 
   let ques = "",
     clicked = false,
     user = null,
     coder = null,
+    loading = false,
     friends = [],
     languages = [
       {
@@ -53,6 +55,7 @@
   };
 
   const interpret = async () => {
+    loading = true;
     const response = await axios.post(
       `http://localhost:3000/api/lc/interpret/${ques}`,
       {
@@ -71,9 +74,11 @@
     );
 
     outputData = response.data;
+    loading = false;
   };
 
   const submit = async () => {
+    loading = true;
     const response = await axios.post(
       `http://localhost:3000/api/lc/submit/${ques}`,
       {
@@ -90,6 +95,8 @@
     );
 
     outputData = response.data;
+    console.log(outputData);
+    loading = false;
   };
 
   onMount(async () => {
@@ -103,22 +110,25 @@
 <div class="flex flex-col min-w-full">
   <input
     type="text"
-    class="bg-gray-300 focus:bg-gray-200 shadow mb-3 appearance-none border-0 rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
-    placeholder="Slug"
+    class="bg-gray-300 focus:bg-gray-200 shadow mb-3 appearance-none border-0 rounded w-full py-2 px-3 leading-normal focus:outline-none focus:shadow-outline"
+    placeholder="Valid Question Slug"
     bind:value={ques}
   />
   <button
     type="button"
-    class="bg-blue-500 mb-3 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+    class="bg-blue-500 mb-3 hover:enabled:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
     on:click={() => {
       clicked = !clicked;
-    }}>Fetch</button
+    }}
+    disabled={ques === ""}>Fetch</button
   >
   <div class="flex space-y-4 flex-col items-center justify-center">
     {#key clicked}
       <Question bind:snippet {ques} bind:question />
     {/key}
-    <div class="flex items-center space-x-2">
+    <div
+      class="flex flex-col sm:flex-row items-center space-y-2 sm:space-x-2 sm:space-y-0"
+    >
       <select
         bind:value={lang}
         class="bg-gray-50 min-w-max border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -160,21 +170,33 @@
       >
     </div>
     <div class="flex flex-col space-y-2 min-w-full">
-      <span class="font-semibold text-xl">Output:</span>
       <div
-        class="w-full h-56 bg-[#1e293b] rounded-md text-white font-normal text-sm overflow-y-auto p-2"
+        class="max-w-full h-56 bg-[#1e293b] rounded-md text-white font-normal text-sm overflow-y-auto p-2"
       >
-        {#if outputData}
+        {#if loading}
+          <div class="flex justify-center">
+            <Circle color="orange" size="3" unit="rem" />
+          </div>
+        {:else if outputData}
           {#if "code_answer" in outputData}
             {#if outputData.run_success}
+              <p class="font-semibold sm:text-lg">
+                {outputData.total_correct} / {outputData.total_testcases} correct
+              </p>
               {#each outputData.code_answer as tc}
                 <p class="text-lg font-semibold">{tc}</p>
               {/each}
+              <span class="sm:text-lg">Expected:</span>
+              {#each outputData.expected_code_answer as tc}
+                <p class="sm:text-lg font-semibold">{tc}</p>
+              {/each}
             {:else}
-              <p>{outputData.full_runtime_error}</p>
+              <p class="text-red-600 dark:text-red-500 sm:text-lg">
+                {outputData.full_runtime_error}
+              </p>
             {/if}
           {:else if outputData.run_success}
-            <p class="text-lg font-semibold text-green-400">
+            <p class="text-lg font-semibold">
               {outputData.status_msg}
             </p>
             <p class="font-semibold">
@@ -182,10 +204,14 @@
               passed
             </p>
           {:else}
-            <p class="text-lg font-semibold text-red-500">
+            <p
+              class="text-lg font-semibold text-red-600 dark:text-red-500 sm:text-lg"
+            >
               {outputData.status_msg}
             </p>
-            <p>{outputData.full_runtime_error}</p>
+            <p class="text-red-600 dark:text-red-500 sm:text-lg">
+              {outputData.full_runtime_error}
+            </p>
             <p class="font-semibold">
               {outputData.total_correct} / {outputData.total_testcases} test cases
               passed
@@ -194,6 +220,26 @@
         {/if}
       </div>
     </div>
+    {#if outputData && !("code_answer" in outputData) && outputData.status_code === 10}
+      <div
+        class="metrics-container mt-4 flex flex-col space-y-3 p-5 rounded-md border-gray-300 border-2"
+      >
+        <p class="text-sm">
+          Runtime: beats <span
+            class="font-semibold px-2 py-1 rounded-md bg-gray-300"
+          >
+            {Math.round(outputData.runtime_percentile)}%
+          </span>
+        </p>
+        <p class="text-sm">
+          Memory: beats <span
+            class="font-semibold px-2 py-1 rounded-md bg-gray-300"
+          >
+            {Math.round(outputData.memory_percentile)}%
+          </span>
+        </p>
+      </div>
+    {/if}
   </div>
 </div>
 
