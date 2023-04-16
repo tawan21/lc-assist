@@ -5,7 +5,6 @@
     doc,
     getDoc,
     onSnapshot,
-    serverTimestamp,
     setDoc,
   } from "firebase/firestore";
   import { onDestroy, onMount } from "svelte";

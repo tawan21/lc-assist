@@ -240,6 +240,7 @@ router.get("/username/:username", async (req, res) => {
           githubUrl
           linkedinUrl
           profile {
+            userAvatar
             ranking
             realName
             aboutMe
