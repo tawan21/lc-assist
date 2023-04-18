@@ -164,7 +164,7 @@
       >
         <!-- Profile dropdown -->
         <div class="relative ml-3">
-          <div>
+          <div class="flex space-x-2">
             {#if loggedIn}
               <button
                 type="button"

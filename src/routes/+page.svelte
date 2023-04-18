@@ -13,7 +13,7 @@
     userDeets = null,
     session = null,
     lcData = null,
-    loading = true;
+    loading = false;
 
   const getLeetcodeInfo = async () => {
     let response = await axios.get(
@@ -35,9 +35,10 @@
   };
 
   onMount(async () => {
+    if (!sessionStorage.getItem("user")) return;
+    loading = true;
     u = JSON.parse(sessionStorage.user);
-    if (sessionStorage.getItem("user")) await getSession();
-    loading = false;
+    await getSession();
     await setDoc(
       doc(db, `usernames/${user}`),
       {
@@ -46,6 +47,7 @@
       },
       { merge: true }
     );
+    loading = false;
   });
 </script>
 

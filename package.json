@@ -8,10 +8,12 @@
 		"preview": "vite preview"
 	},
 	"devDependencies": {
+		"@smui/fab": "^7.0.0-beta.3",
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.5.0",
 		"autoprefixer": "^10.4.14",
 		"postcss": "^8.4.21",
+		"smui-theme": "^7.0.0-beta.3",
 		"svelte": "^3.54.0",
 		"svelte-loading-spinners": "^0.3.4",
 		"tailwindcss": "^3.2.7",
@@ -30,6 +32,7 @@
 		"firebase": "^9.18.0",
 		"monaco-themes": "^0.4.4",
 		"path": "^0.12.7",
-		"svelte-forms": "^2.3.1"
+		"svelte-forms": "^2.3.1",
+		"uuid": "^9.0.0"
 	}
 }

@@ -3,7 +3,6 @@
     collection,
     deleteDoc,
     doc,
-    getDoc,
     getDocs,
     orderBy,
     query,
@@ -12,6 +11,7 @@
   import { onMount } from "svelte";
   import { db } from "../firebase";
   import { Circle } from "svelte-loading-spinners";
+  import { goto } from "$app/navigation";
 
   let mail = "",
     friends = [],
@@ -92,6 +92,15 @@
                   ></span
                 >
               </div>
+              <button
+                on:click={() => {
+                  sessionStorage.friend = friend.mail;
+                  goto("/chat");
+                }}
+                type="button"
+                class="bg-violet-500 mb-3 hover:bg-violet-700 sm:font-semibold px-4 py-2 rounded-full focus:outline-none focus:shadow-outline"
+                >Chat</button
+              >
               <button
                 on:click={removeFriend(friend.mail)}
                 type="button"

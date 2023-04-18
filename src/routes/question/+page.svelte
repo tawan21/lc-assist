@@ -196,7 +196,13 @@
               </p>
             {/if}
           {:else if outputData.run_success}
-            <p class="text-lg font-semibold">
+            <p
+              class={`text-lg font-semibold ${
+                outputData.status_code === 10
+                  ? "text-green-500"
+                  : "text-red-600"
+              }`}
+            >
               {outputData.status_msg}
             </p>
             <p class="font-semibold">

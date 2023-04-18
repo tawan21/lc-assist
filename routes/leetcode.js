@@ -267,14 +267,14 @@ router.get("/username/:username", async (req, res) => {
   }
 })
 
-const getOutput = async (id, prob) => {
+const getOutput = async (id, prob, headers) => {
   try {
     const response = await axios.get(`https://leetcode.com/submissions/detail/${id}/check`, {
       headers: {
         'Referer': `https://leetcode.com/problems/${prob}/`,
         'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRFToken': 'MGo78UjFByPCYHposdG8AamXrRuxNzWXIYvtOb862Uh1OWYNCyDLAfBFLyrEj8qC',
-        'Cookie': `csrftoken=MGo78UjFByPCYHposdG8AamXrRuxNzWXIYvtOb862Uh1OWYNCyDLAfBFLyrEj8qC;LEETCODE_SESSION=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50X3ZlcmlmaWVkX2VtYWlsIjpudWxsLCJhY2NvdW50X3VzZXIiOiI1aTJicSIsIl9hdXRoX3VzZXJfaWQiOiI5MjQwOTAyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiYWxsYXV0aC5hY2NvdW50LmF1dGhfYmFja2VuZHMuQXV0aGVudGljYXRpb25CYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiYzY1OWJiZjQxZTQ4OTIzYjIxMzBiNWZhM2FkYWY5OWM5NzcyMzU4YSIsImlkIjo5MjQwOTAyLCJlbWFpbCI6ImFub242OWZAZ21haWwuY29tIiwidXNlcm5hbWUiOiJhbm9ubm9uYW5vbiIsInVzZXJfc2x1ZyI6ImFub25ub25hbm9uIiwiYXZhdGFyIjoiaHR0cHM6Ly9zMy11cy13ZXN0LTEuYW1hem9uYXdzLmNvbS9zMy1sYy11cGxvYWQvYXNzZXRzL2RlZmF1bHRfYXZhdGFyLmpwZyIsInJlZnJlc2hlZF9hdCI6MTY4MTAyOTk2MCwiaXAiOiIxMDMuNjYuMjA2LjMiLCJpZGVudGl0eSI6ImMzZmNkOWU1MmZkNzc1YzQzYzk1NTNhOTYxYmZjNTJjIiwic2Vzc2lvbl9pZCI6Mzc4MjA1NzN9.-hX5Ml5n_cB5Qae6yEWETr5B3CmfOeE4iEhD_JHfh9g;`
+        'X-CSRFToken': headers.csrf_token,
+        'Cookie': `csrftoken=${headers.csrf_token};LEETCODE_SESSION=${headers.session_id};`
       },
       withCredentials: false
     });
@@ -300,8 +300,8 @@ router.post("/interpret/:title", async (req, res) => {
 
     do {
       --ct;
-      result = await getOutput(response.data.interpret_id, req.params.title)
-    } while (result.state === "PENDING" || ct > 0);
+      result = await getOutput(response.data.interpret_id, req.params.title, req.headers)
+    } while (result.state !== "SUCCESS" || ct > 0);
 
     res.send(result);
   } catch (error) {
@@ -326,7 +326,7 @@ router.post("/submit/:title", async (req, res) => {
 
     do {
       --ct;
-      result = await getOutput(response.data.submission_id, req.params.title)
+      result = await getOutput(response.data.submission_id, req.params.title, req.headers)
     } while (result.state !== "SUCCESS" || ct > 0);
 
     res.send(result);
