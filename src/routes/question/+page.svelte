@@ -95,7 +95,6 @@
     );
 
     outputData = response.data;
-    console.log(outputData);
     loading = false;
   };
 

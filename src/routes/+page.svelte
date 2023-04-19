@@ -7,6 +7,7 @@
   import { doc, getDoc, setDoc } from "firebase/firestore";
   import { db } from "../firebase";
   import { Circle } from "svelte-loading-spinners";
+  import { goto } from "$app/navigation";
 
   let u,
     user = null,
@@ -35,7 +36,7 @@
   };
 
   onMount(async () => {
-    if (!sessionStorage.getItem("user")) return;
+    if (!sessionStorage.getItem("user")) goto("/profile");
     loading = true;
     u = JSON.parse(sessionStorage.user);
     await getSession();

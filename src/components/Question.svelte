@@ -18,8 +18,6 @@
       `http://localhost:3000/api/lc/question/${ques}`
     );
 
-    console.log(response.data);
-
     if (response.status !== 200 || !response.data.question) return;
     question = response.data.question;
     snippet = response.data.question.codeSnippets;

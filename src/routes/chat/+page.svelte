@@ -11,15 +11,31 @@
     participants,
     unsubscribe;
 
+  $: if (user) {
+    unsubscribe = onSnapshot(
+      doc(db, `chat-rooms/[${participants[0]},${participants[1]}]`),
+      (doc) => {
+        if (doc.exists()) messages = doc.data().messages;
+      }
+    );
+  }
+
   const sendMsg = async () => {
     messages = [
       ...messages,
       {
         message: message,
         sentBy: user.email,
+        time: { seconds: new Date() / 1000 },
       },
     ];
 
+    await updateMsgs();
+
+    message = "";
+  };
+
+  const updateMsgs = async () => {
     await setDoc(
       doc(db, "chat-rooms", `[${participants[0]},${participants[1]}]`),
       {
@@ -28,8 +44,6 @@
       },
       { merge: true }
     );
-
-    message = "";
   };
 
   onMount(async () => {
@@ -37,15 +51,11 @@
     friend = sessionStorage.friend;
     participants = [user.email, friend];
     participants.sort();
-    unsubscribe = onSnapshot(
-      doc(db, `chat-rooms/[${participants[0]},${participants[1]}]`),
-      (doc) => {
-        if (doc.exists()) messages = doc.data().messages;
-      }
-    );
   });
 
-  onDestroy(() => unsubscribe());
+  onDestroy(() => {
+    if (unsubscribe) unsubscribe();
+  });
 </script>
 
 <main>
@@ -60,17 +70,30 @@
       >
         {#each messages as message}
           <div
-            class={`flex flex-col ${
+            class={`flex flex-col mb-3 ${
               message.sentBy === user.email ? "items-end" : "items-start"
             }`}
           >
             <div
-              class={`w-fit px-4 py-2 mb-2 ${
+              class={`w-fit px-4 py-2 ${
                 message.sentBy === user.email ? "bg-pink-700" : "bg-violet-700"
-              } rounded-md font-semibold text-white`}
+              } rounded-xl font-semibold text-white`}
             >
               {message.message}
             </div>
+            <span
+              class={`text-gray-700 text-xs ${
+                message.sentBy === user.email ? "mr-1" : "ml-1"
+              }`}
+            >
+              {new Date(message.time?.seconds * 1000).toLocaleString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+                day: "2-digit",
+                month: "short",
+                hour12: false,
+              })}
+            </span>
           </div>
         {/each}
       </div>

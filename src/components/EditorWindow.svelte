@@ -10,34 +10,31 @@
   import { onDestroy, onMount } from "svelte";
   import { db } from "../firebase";
 
-  export let user,
-    lang,
-    bpc,
-    ques,
-    code = "";
+  export let user, lang, bpc, ques, code;
 
   let editor = null,
-    oldCode = "",
-    exists = false,
     u = "",
     edt = null,
-    unsubscribe = null,
+    unsubscribe,
     timer = null,
     done = true;
 
-  const getSnapshot = () => {
+  $: getSnapshot = () => {
+    if (!user || !ques) return;
+
     unsubscribe = onSnapshot(
       doc(db, `snippets/${user}/${ques}/${lang.value}`),
       (doc) => {
+        const data = doc.data();
+        const author = data.editBy;
+        if (author === u) return;
+
         const lastPos = edt.getPosition();
-        code = doc.data().code;
-        if (code !== oldCode) {
-          console.log(code);
-          if (done) {
-            edt.getModel().setValue(code);
-            edt.setPosition(lastPos);
-            oldCode = code;
-          }
+
+        if (done) {
+          code = data.code;
+          edt.getModel().setValue(code);
+          edt.setPosition(lastPos);
         }
       }
     );
@@ -49,9 +46,7 @@
       doc(db, `snippets/${user}/${ques}/${lang.value}`)
     );
     if (docSnap.exists()) {
-      exists = true;
       code = docSnap.data().code;
-      oldCode = code;
     } else code = bpc;
   };
 
@@ -59,7 +54,7 @@
     if (!sessionStorage.getItem("user")) return;
     u = JSON.parse(sessionStorage.user).email;
     await getCode();
-    if (exists) getSnapshot();
+    getSnapshot();
     loader.init().then((monaco) => {
       if (editor) {
         edt = monaco.editor.create(editor, {
@@ -78,7 +73,7 @@
   });
 
   onDestroy(() => {
-    if (exists) unsubscribe();
+    if (unsubscribe) unsubscribe();
   });
 
   const storeCode = async () => {
@@ -103,11 +98,7 @@
     clearTimeout(timer);
     timer = setTimeout(() => {
       done = true;
-      if (code !== oldCode) {
-        console.log(code);
-        storeCode();
-        oldCode = code;
-      }
+      storeCode();
     }, 1000);
   };
 </script>

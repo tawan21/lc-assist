@@ -51,7 +51,7 @@
   };
 
   onMount(async () => {
-    if (!sessionStorage.getItem("user")) return;
+    if (!sessionStorage.getItem("user")) goto("/profile");
     user = JSON.parse(sessionStorage.user);
     loading = true;
     await getFriends();
