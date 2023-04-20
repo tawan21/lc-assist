@@ -13,7 +13,7 @@
 
   $: if (user) {
     unsubscribe = onSnapshot(
-      doc(db, `chat-rooms/[${participants[0]},${participants[1]}]`),
+      doc(db, `chat-rooms/${participants[0]},${participants[1]}`),
       (doc) => {
         if (doc.exists()) messages = doc.data().messages;
       }
@@ -37,7 +37,7 @@
 
   const updateMsgs = async () => {
     await setDoc(
-      doc(db, "chat-rooms", `[${participants[0]},${participants[1]}]`),
+      doc(db, "chat-rooms", `${participants[0]},${participants[1]}`),
       {
         id: uuidv4(),
         messages: messages,
@@ -53,6 +53,12 @@
     participants.sort();
   });
 
+  const getDate = (cd, pd) => {
+    const dd = new Date(cd * 1000).getDate() - new Date(pd * 1000).getDate();
+
+    return dd;
+  };
+
   onDestroy(() => {
     if (unsubscribe) unsubscribe();
   });
@@ -60,24 +66,54 @@
 
 <main>
   <div class="flex min-w-full justify-center items-center">
-    <div class="flex min-w-full flex-col bg-slate-900 px-8 py-8 rounded-lg">
+    <div class="flex min-w-full flex-col bg-slate-900 p-4 sm:p-8 rounded-lg">
       <div class="mb-4">
-        <h5 class="font-bold text-gray-50 text-3xl text-center">Chat</h5>
-        <p class="text-gray-400 text-center">with {friend}</p>
+        <h5 class="font-bold text-gray-50 text-2xl sm:text-3xl text-center">
+          Chat
+        </h5>
+        <p class="text-gray-400 text-sm sm:text-base text-center">
+          with {friend}
+        </p>
       </div>
       <div
-        class="max-h-screen overflow-auto mb-4 bg-gray-300 rounded-md px-4 py-4"
+        class="max-h-screen text-center overflow-auto mb-4 bg-gray-300 rounded-md px-4 py-4"
       >
-        {#each messages as message}
+        {#each messages as message, i}
+          {#if i}
+            {#if getDate(message.time.seconds, messages[i - 1].time.seconds) > 0}
+              <div class="flex justify-center">
+                <div
+                  class="text-xs sm:text-sm mt-6 text-white text-center px-2 py-1 rounded-full bg-gray-600"
+                >
+                  {new Date(message.time?.seconds * 1000).toLocaleString(
+                    "en-US",
+                    {
+                      month: "short",
+                      day: "2-digit",
+                    }
+                  )}
+                </div>
+              </div>
+            {/if}
+          {:else}
+            <span
+              class="text-xs sm:text-sm text-white px-2 py-1 rounded-full bg-gray-600"
+            >
+              {new Date(message.time?.seconds * 1000).toLocaleString("en-US", {
+                month: "short",
+                day: "2-digit",
+              })}
+            </span>
+          {/if}
           <div
-            class={`flex flex-col mb-3 ${
+            class={`flex flex-col mt-3 ${
               message.sentBy === user.email ? "items-end" : "items-start"
             }`}
           >
             <div
-              class={`w-fit px-4 py-2 ${
+              class={`w-fit px-3 py-1.5 ${
                 message.sentBy === user.email ? "bg-pink-700" : "bg-violet-700"
-              } rounded-xl font-semibold text-white`}
+              } rounded-xl sm:font-semibold text-white`}
             >
               {message.message}
             </div>
@@ -89,8 +125,6 @@
               {new Date(message.time?.seconds * 1000).toLocaleString("en-US", {
                 hour: "2-digit",
                 minute: "2-digit",
-                day: "2-digit",
-                month: "short",
                 hour12: false,
               })}
             </span>

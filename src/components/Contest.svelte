@@ -7,6 +7,7 @@
   export let user;
 
   let contestStats = {},
+    output = {},
     loading = true;
 
   onMount(async () => {
@@ -20,6 +21,12 @@
     );
 
     contestStats = response.data.userContestRanking;
+    if (contestStats) {
+      const keys = ["Attended", "Rating", "Ranking"];
+      Object.entries(contestStats).forEach((e, i) => {
+        output[keys[i]] = Math.round(e[1]);
+      });
+    }
   };
 </script>
 
@@ -35,7 +42,7 @@
     {#if loading}
       <Circle color="orange" size="3" unit="rem" />
     {:else if contestStats}
-      {#each Object.entries(contestStats) as [key, value]}
+      {#each Object.entries(output) as [key, value]}
         <p>{key}</p>
         <p class="mb-2 text-3xl font-extrabold">{value}</p>
       {/each}

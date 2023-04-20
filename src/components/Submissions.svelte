@@ -26,13 +26,13 @@
 
   const timeElapsed = (timestamp) => {
     const dt = new Date(parseInt(timestamp * 1000));
-    return `submitted ${dt.toLocaleTimeString("en-US", {
+    return dt.toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "numeric",
-    })}, ${dt.toLocaleString("en-US", {
+      hour12: false,
+      day: "2-digit",
       month: "long",
-      day: "numeric",
-    })}`;
+    });
   };
 </script>
 
@@ -40,18 +40,22 @@
   class="max-w-full mb-3 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
 >
   <h5
-    class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+    class="mb-2 text-xl sm:text-2xl font-bold tracking-tight text-green-600 dark:text-green-500"
   >
     Recent AC Submissions
   </h5>
-  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+  <p class="mb-3 font-normal text-black dark:text-white">
     {#if loading}
       <Circle color="orange" size="3" unit="rem" />
     {:else}
       {#each Object.entries(submissions) as [_, value]}
         <div class="mb-3">
-          <p class="text-xl font-extrabold">{value.title}</p>
-          <p>{timeElapsed(value.timestamp)}</p>
+          <p class="text-lg sm:text-xl font-bold sm:font-extrabold">
+            {value.title}
+          </p>
+          <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-400">
+            {timeElapsed(value.timestamp)}
+          </p>
         </div>
       {/each}
     {/if}

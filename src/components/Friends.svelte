@@ -14,9 +14,10 @@
   import { goto } from "$app/navigation";
 
   let mail = "",
-    friends = [],
     loading = false,
     user = null;
+
+  export let friends = [];
 
   const getFriends = async () => {
     const collec = await getDocs(
@@ -30,17 +31,18 @@
     friends = f;
   };
 
-  const addFriend = async () => {
+  const makeRequest = async () => {
     const dt = new Date();
-    friends = [...friends, { mail: mail, added: { seconds: dt / 1000 } }];
     await setDoc(
-      doc(db, `users/${user.email}/friends/${mail}`),
+      doc(db, `users/${mail}/requests/${user.email}`),
       {
-        mail: mail,
+        mail: user.email,
         added: dt,
       },
       { merge: true }
     );
+
+    mail = "";
   };
 
   const removeFriend = async (d) => {
@@ -48,6 +50,7 @@
     friends.splice(idx, 1);
     friends = friends;
     await deleteDoc(doc(db, `users/${user.email}/friends/${d}`));
+    await deleteDoc(doc(db, `users/${d}/friends/${user.email}`));
   };
 
   onMount(async () => {
@@ -62,10 +65,12 @@
 <div
   class="min-w-full mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col"
 >
-  <div class="flex flex-col pb-10 justify-center space-y-5 text-white">
+  <div
+    class="flex flex-col pb-10 justify-center space-y-5 text-gray-900 dark:text-white"
+  >
     {#if loading}
       <Circle color="orange" size="3" unit="rem" />
-    {:else}
+    {:else if friends.length > 0}
       {#key friends}
         <div>
           {#each friends as friend}
@@ -82,48 +87,54 @@
                     >{new Date(friend.added.seconds * 1000).toLocaleString(
                       "en-US",
                       {
-                        year: "numeric",
                         month: "short",
                         day: "numeric",
                         hour: "numeric",
                         minute: "numeric",
+                        hour12: false,
                       }
                     )}</span
                   ></span
                 >
               </div>
-              <button
-                on:click={() => {
-                  sessionStorage.friend = friend.mail;
-                  goto("/chat");
-                }}
-                type="button"
-                class="bg-violet-500 mb-3 hover:bg-violet-700 sm:font-semibold px-4 py-2 rounded-full focus:outline-none focus:shadow-outline"
-                >Chat</button
-              >
-              <button
-                on:click={removeFriend(friend.mail)}
-                type="button"
-                class="bg-red-500 mb-3 hover:bg-red-700 sm:font-semibold p-1 rounded-full focus:outline-none focus:shadow-outline"
-                ><svg
-                  class="block h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  aria-hidden="true"
+              <div class="flex flex-col sm:flex-row sm:space-x-5">
+                <button
+                  on:click={() => {
+                    sessionStorage.friend = friend.mail;
+                    goto("/chat");
+                  }}
+                  type="button"
+                  class="bg-violet-500 text-xs sm:text-base mb-3 hover:bg-violet-700 sm:font-semibold px-2 sm:px-4 py-1 sm:py-2 rounded-full focus:outline-none focus:shadow-outline"
+                  >Chat</button
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg></button
-              >
+                <button
+                  on:click={removeFriend(friend.mail)}
+                  type="button"
+                  class="bg-red-500 mb-3 hover:bg-red-700 sm:font-semibold px-2 sm:py-2 rounded-full focus:outline-none focus:shadow-outline"
+                  ><svg
+                    class="block h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg></button
+                >
+              </div>
             </div>
           {/each}
         </div>
       {/key}
+    {:else}
+      <h5 class="text-xl font-medium text-gray-900 text-center dark:text-white">
+        NO Friends
+      </h5>
     {/if}
   </div>
 
@@ -136,7 +147,7 @@
   <button
     type="button"
     class="bg-blue-500 mb-3 hover:enabled:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
-    on:click={addFriend}
+    on:click={makeRequest}
     disabled={!mail.endsWith("@gmail.com") || mail.startsWith("@")}>Add</button
   >
 </div>

@@ -61,8 +61,10 @@
           language: lang.value === "python3" ? "python" : lang.value,
           value: code ? code : "print('Pick a Question!')",
           theme: "vs-dark",
-          fontSize: "17px",
+          fontSize: "16px",
+          minimap: { enabled: false },
           "bracketPairColorization.enabled": true,
+          lineNumbersMinChars: 2,
         });
 
         edt.onDidChangeModelContent(() => {

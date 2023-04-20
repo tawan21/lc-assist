@@ -11,7 +11,7 @@
 {#key pg}
     <Navbar bind:loggedIn />
 {/key}
-<div class="flex justify-center p-5">
+<div class="flex flex-col justify-center p-3">
     {#key loggedIn}
         <slot />
     {/key}

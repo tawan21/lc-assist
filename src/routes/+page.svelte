@@ -41,9 +41,8 @@
     u = JSON.parse(sessionStorage.user);
     await getSession();
     await setDoc(
-      doc(db, `usernames/${user}`),
+      doc(db, `lc-session/${u.email}`),
       {
-        mail: u.email,
         username: user,
       },
       { merge: true }
@@ -65,9 +64,11 @@
           class="w-24 h-24 mb-3 rounded-full shadow-lg"
           src={lcData.avatar}
         />
-        <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">
-          {userDeets.profile.realName}
-        </h5>
+        {#if userDeets.profile.realName}
+          <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">
+            {userDeets.profile.realName}
+          </h5>
+        {/if}
         <h5 class="mb-1 font-medium text-gray-900 dark:text-gray-200">
           @{user}
         </h5>
