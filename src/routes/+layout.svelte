@@ -16,3 +16,9 @@
         <slot />
     {/key}
 </div>
+
+<style lang="postcss">
+    :global(html) {
+        background-color: theme(colors.lc);
+    }
+</style>

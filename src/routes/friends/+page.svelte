@@ -9,9 +9,3 @@
   <Friends bind:friends />
   <Requests bind:friends />
 </div>
-
-<style lang="postcss">
-  :global(html) {
-    background-color: theme(colors.gray.200);
-  }
-</style>

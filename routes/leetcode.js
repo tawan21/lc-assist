@@ -23,12 +23,17 @@ router.get("/contest_stats/:user", async (req, res) => {
       },
       referrer: "https://leetcode.com/",
       referrerPolicy: "strict-origin-when-cross-origin",
-      body: `{"operationName":"getContestRankingData","variables":{"username":"${req.params.user}"},"query":"query getContestRankingData($username: String!) {\
+      body: `{"operationName":"userContestRankingInfo","variables":{"username":"${req.params.user}"},"query":"query userContestRankingInfo($username: String!) {\
         userContestRanking(username: $username) {\
-          attendedContestsCount\
-          rating\
-          globalRanking\
+            attendedContestsCount\
+            rating\
+            globalRanking\
           }\
+        userContestRankingHistory(username: $username) {\
+          attended\
+          rating\
+          ranking\
+        }\
       }\
       "}`,
       method: "POST",
@@ -76,6 +81,98 @@ router.get("/submissions/:user", async (req, res) => {
     });
     response = await response.json()
     res.send(response.data)
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+})
+
+router.get("/submission_calendar/:user", async (req, res) => {
+  try {
+    let response = await fetch("https://leetcode.com/graphql", {
+      headers: {
+        accept: "*/*",
+        "accept-language":
+          "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7,ru;q=0.6",
+        "cache-control": "no-cache",
+        "content-type": "application/json",
+        pragma: "no-cache",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua":
+          '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "sec-gpc": "1",
+      },
+      referrer: "https://leetcode.com/",
+      referrerPolicy: "strict-origin-when-cross-origin",
+      body: `{"operationName":"userProfileCalendar","variables":{"username":"${req.params.user}"},"query":"query userProfileCalendar($username: String!, $year: Int) {\
+          matchedUser(username: $username) {\
+            userCalendar(year: $year) {\
+              activeYears\
+              streak\
+              totalActiveDays\
+              submissionCalendar\
+            }\
+          }\
+        }\
+      "}`,
+      method: "POST",
+      mode: "cors",
+    });
+    response = await response.json()
+    res.send(response.data)
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+})
+
+router.get("/skill_stats/:user", async (req, res) => {
+  try {
+    let response = await fetch("https://leetcode.com/graphql", {
+      headers: {
+        accept: "*/*",
+        "accept-language":
+          "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7,ru;q=0.6",
+        "cache-control": "no-cache",
+        "content-type": "application/json",
+        pragma: "no-cache",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua":
+          '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "sec-gpc": "1",
+      },
+      referrer: "https://leetcode.com/",
+      referrerPolicy: "strict-origin-when-cross-origin",
+      body: `{"operationName":"skillStats","variables":{"username":"${req.params.user}"},"query":"query skillStats($username: String!) {\
+        matchedUser(username: $username) {\
+          tagProblemCounts {\
+            advanced {\
+              tagName\
+              problemsSolved\
+            }\
+            intermediate {\
+              tagName\
+              problemsSolved\
+            }\
+            fundamental {\
+              tagName\
+              problemsSolved\
+            }\
+          }\
+        }\
+      }\
+      "}`,
+      method: "POST",
+      mode: "cors",
+    });
+    response = await response.json()
+    res.send(response.data.matchedUser.tagProblemCounts)
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Internal Server Error");

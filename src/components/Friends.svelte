@@ -148,6 +148,7 @@
     type="button"
     class="bg-blue-500 mb-3 hover:enabled:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
     on:click={makeRequest}
-    disabled={!mail.endsWith("@gmail.com") || mail.startsWith("@")}>Add</button
+    disabled={!mail.endsWith("@gmail.com") || mail.startsWith("@")}
+    >Request</button
   >
 </div>

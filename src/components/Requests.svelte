@@ -70,7 +70,7 @@
 </script>
 
 <div>
-  <h5 class="text-xl font-semibold">Requests</h5>
+  <h5 class="text-xl text-white font-semibold">Requests</h5>
   <div
     class="min-w-full mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col"
   >
@@ -96,11 +96,11 @@
                       >{new Date(friend.added.seconds * 1000).toLocaleString(
                         "en-US",
                         {
-                          year: "numeric",
                           month: "short",
                           day: "numeric",
                           hour: "numeric",
                           minute: "numeric",
+                          hour12: false,
                         }
                       )}</span
                     ></span

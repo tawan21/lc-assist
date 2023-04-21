@@ -3,12 +3,12 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth"
 import { getFirestore } from "firebase/firestore"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDs3HF2Y-hf6KUhQH1sECzZSBM1JTGhFZY",
-  authDomain: "lc-assist.firebaseapp.com",
-  projectId: "lc-assist",
-  storageBucket: "lc-assist.appspot.com",
-  messagingSenderId: "116619265795",
-  appId: "1:116619265795:web:51c92240e91f53e4e34b36"
+  apiKey: import.meta.env.VITE_FIREBASE_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT,
+  storageBucket: import.meta.env.VITE_FIREBASE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_SENDER,
+  appId: import.meta.env.VITE_FIREBASE_APP
 }
 
 const app = initializeApp(firebaseConfig)

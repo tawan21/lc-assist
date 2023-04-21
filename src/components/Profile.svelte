@@ -1,13 +1,5 @@
 <script>
-  import axios from "axios";
-  import {
-    collection,
-    doc,
-    getDoc,
-    getDocs,
-    query,
-    setDoc,
-  } from "firebase/firestore";
+  import { doc, getDoc, setDoc } from "firebase/firestore";
   import { onMount } from "svelte";
   import { db } from "../firebase";
   import { Circle } from "svelte-loading-spinners";
@@ -16,6 +8,7 @@
     needC = false,
     leet_sesh = null,
     leet_csrf = null,
+    linkBtn,
     loading = false;
 
   onMount(async () => {
@@ -30,14 +23,17 @@
   });
 
   const linkLeetcode = async () => {
-    await setDoc(doc(db, "lc-session", user.email), {
+    await setDoc(doc(db, "lc-session", user.email, "private", "identifiers"), {
       leetcodeSession: leet_sesh,
       leetcodeCsrf: leet_csrf,
     });
+    linkBtn.innerText = "Linked";
   };
 
   const getSession = async () => {
-    const d = await getDoc(doc(db, "lc-session", user.email));
+    const d = await getDoc(
+      doc(db, "lc-session", user.email, "private", "identifiers")
+    );
     if (d.exists()) {
       const dt = d.data();
       leet_sesh = dt.leetcodeSession;
@@ -80,6 +76,7 @@
           type="button"
           class="bg-blue-500 mb-3 hover:enabled:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
           on:click={linkLeetcode}
+          bind:this={linkBtn}
           disabled={leet_sesh === "" || leet_csrf === ""}>Link</button
         >
       {/if}

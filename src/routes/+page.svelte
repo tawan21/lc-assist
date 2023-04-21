@@ -28,7 +28,9 @@
   };
 
   const getSession = async () => {
-    const d = await getDoc(doc(db, "lc-session", u.email));
+    const d = await getDoc(
+      doc(db, "lc-session", u.email, "private", "identifiers")
+    );
     if (d.exists()) {
       session = d.data().leetcodeSession;
       await getLeetcodeInfo();
@@ -44,6 +46,7 @@
       doc(db, `lc-session/${u.email}`),
       {
         username: user,
+        updated: new Date(),
       },
       { merge: true }
     );
@@ -52,9 +55,7 @@
 </script>
 
 <div class="flex flex-col min-w-full">
-  <div
-    class="min-w-full mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
-  >
+  <div class="min-w-full mt-3 px-4 pt-4 max-w-sm">
     <div class="flex flex-col items-center pb-10 space-y-5">
       {#if loading}
         <Circle color="orange" size="3" unit="rem" />
@@ -84,9 +85,3 @@
     {/if}
   </div>
 </div>
-
-<style lang="postcss">
-  :global(html) {
-    background-color: theme(colors.gray.200);
-  }
-</style>
