@@ -70,21 +70,23 @@
 </script>
 
 <div>
-  <h5 class="text-xl text-white font-semibold">Requests</h5>
+  <h5 class="text-xl text-black dark:text-white font-semibold">Requests</h5>
   <div
-    class="min-w-full mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col"
+    class="animate-fade-in-up min-w-full mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-lcdull flex flex-col dark:border-0"
   >
     <div
       class="flex flex-col pb-10 justify-center space-y-5 text-gray-900 dark:text-white"
     >
       {#if loading}
-        <Circle color="orange" size="3" unit="rem" />
+        <div class="flex justify-center">
+          <Circle color="orange" size="3" unit="rem" />
+        </div>
       {:else if requests.length > 0}
         {#key requests}
           <div>
             {#each requests as friend}
               <div
-                class="flex justify-around items-center overflow-auto min-w-full mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+                class="animate-fade-in-up flex justify-around items-center overflow-auto min-w-full mt-3 px-4 pt-4 max-w-sm bg-gray-100 border border-gray-300 rounded-lg shadow dark:bg-lc dark:border-0"
               >
                 <div class="flex flex-col py-3">
                   <span

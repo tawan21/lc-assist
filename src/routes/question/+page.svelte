@@ -1,11 +1,19 @@
 <script>
-  import { collection, getDocs, orderBy, query } from "firebase/firestore";
+  import {
+    collection,
+    doc,
+    getDocs,
+    orderBy,
+    query,
+    setDoc,
+  } from "firebase/firestore";
   import EditorWindow from "../../components/EditorWindow.svelte";
   import Question from "../../components/Question.svelte";
   import { db } from "../../firebase";
   import { onMount } from "svelte";
   import axios from "axios";
   import { Circle } from "svelte-loading-spinners";
+  import moment from "moment";
 
   let ques = "",
     clicked = false,
@@ -36,6 +44,7 @@
     lang = languages[0],
     question = {},
     finalCode = "",
+    inp,
     outputData = null,
     snippet = "";
   $: code = Object.values(snippet).filter(
@@ -95,11 +104,29 @@
     );
 
     outputData = response.data;
+
+    if (outputData.run_success) {
+      const d = -moment("1970-01-01", "YYYY-MM-DD").diff(
+        moment().startOf("day"),
+        "days",
+        false
+      );
+      await setDoc(
+        doc(db, `submissions/${user.email}/${d}/${ques}`),
+        {
+          language: lang.value,
+          submitted: new Date(),
+        },
+        { merge: true }
+      );
+    }
+
     loading = false;
   };
 
   onMount(async () => {
     if (!sessionStorage.getItem("user")) return;
+    inp.focus();
     user = JSON.parse(sessionStorage.user);
     coder = user.email;
     await getFriends();
@@ -112,6 +139,7 @@
     class="bg-gray-300 focus:bg-gray-200 shadow mb-3 appearance-none border-0 rounded w-full py-2 px-3 leading-normal focus:outline-none focus:shadow-outline"
     placeholder="Valid Question Slug"
     bind:value={ques}
+    bind:this={inp}
   />
   <button
     type="button"
@@ -130,7 +158,7 @@
     >
       <select
         bind:value={lang}
-        class="bg-gray-50 min-w-max border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="bg-gray-50 min-w-max border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-lc dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
       >
         {#each languages as opt}
           <option value={opt}>{opt.name}</option>
@@ -138,7 +166,7 @@
       </select>
       <select
         bind:value={coder}
-        class="bg-gray-50 min-w-max border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="bg-gray-50 min-w-max border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-lc dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
       >
         {#each friends as opt}
           <option value={opt}>{opt}</option>
@@ -159,12 +187,12 @@
     <div>
       <button
         type="button"
-        class="bg-gray-500 mb-3 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        class="bg-gray-600 mb-3 hover:bg-gray-700 hover:text-yellow-500 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         on:click={interpret}>Run Code</button
       >
       <button
         type="button"
-        class="bg-gray-300 uppercase mb-3 hover:bg-gray-200 hover:text-green-500 text-blue-500 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        class="bg-gray-200 uppercase mb-3 hover:bg-white hover:text-green-500 text-blue-500 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         on:click={submit}>Submit</button
       >
     </div>
@@ -190,8 +218,12 @@
                 <p class="sm:text-lg font-semibold">{tc}</p>
               {/each}
             {:else}
-              <p class="text-red-600 dark:text-red-500 sm:text-lg">
-                {outputData.full_runtime_error}
+              <p
+                class="text-red-600 dark:text-red-500 font-semibold sm:text-lg"
+              >
+                {outputData.full_runtime_error
+                  ? outputData.full_runtime_error
+                  : outputData.status_msg}
               </p>
             {/if}
           {:else if outputData.run_success}
@@ -214,9 +246,11 @@
             >
               {outputData.status_msg}
             </p>
-            <p class="text-red-600 dark:text-red-500 sm:text-lg">
-              {outputData.full_runtime_error}
-            </p>
+            {#if outputData.full_runtime_error}
+              <p class="text-red-600 dark:text-red-500 sm:text-lg">
+                {outputData.full_runtime_error}
+              </p>
+            {/if}
             <p class="font-semibold">
               {outputData.total_correct} / {outputData.total_testcases} test cases
               passed

@@ -3,6 +3,7 @@
     collection,
     deleteDoc,
     doc,
+    getCountFromServer,
     getDocs,
     orderBy,
     query,
@@ -12,22 +13,34 @@
   import { db } from "../firebase";
   import { Circle } from "svelte-loading-spinners";
   import { goto } from "$app/navigation";
+  import moment from "moment";
 
   let mail = "",
     loading = false,
-    user = null;
+    user = null,
+    ct = {};
 
   export let friends = [];
 
   const getFriends = async () => {
-    const collec = await getDocs(
+    let collec = await getDocs(
       query(collection(db, `users/${user.email}/friends`), orderBy("added"))
     );
     const f = [];
-    collec.forEach((doc) => {
+    const d = -moment("1970-01-01", "YYYY-MM-DD").diff(
+      moment().startOf("day"),
+      "days",
+      false
+    );
+    collec.forEach(async (doc) => {
       const data = doc.data();
       f.push({ mail: data.mail, added: data.added });
+      const qs = await getCountFromServer(
+        collection(db, `submissions/${data.mail}/${d}`)
+      );
+      ct[data.mail] = qs.data().count;
     });
+    f.sort((f1, f2) => (ct[f1] > ct[f2] ? 1 : -1));
     friends = f;
   };
 
@@ -63,19 +76,21 @@
 </script>
 
 <div
-  class="min-w-full mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col"
+  class="animate-fade-in-up min-w-full mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-lcdull dark:border-0 flex flex-col"
 >
   <div
-    class="flex flex-col pb-10 justify-center space-y-5 text-gray-900 dark:text-white"
+    class="flex flex-col pb-10 justify-center text-center space-y-5 text-gray-900 dark:text-white"
   >
     {#if loading}
-      <Circle color="orange" size="3" unit="rem" />
+      <div class="flex justify-center">
+        <Circle color="orange" size="3" unit="rem" />
+      </div>
     {:else if friends.length > 0}
       {#key friends}
         <div>
           {#each friends as friend}
             <div
-              class="flex justify-around items-center overflow-auto min-w-full mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+              class="animate-fade-in-up flex justify-around items-center overflow-auto min-w-full mt-3 px-4 pt-4 max-w-sm bg-gray-100 border border-gray-300 rounded-lg shadow dark:bg-lc dark:border-0"
             >
               <div class="flex flex-col py-3">
                 <span
@@ -96,6 +111,12 @@
                     )}</span
                   ></span
                 >
+              </div>
+              <div>
+                <p>
+                  <span class="font-semibold text-lg">{ct[friend.mail]}</span> question(s)
+                  tried today
+                </p>
               </div>
               <div class="flex flex-col sm:flex-row sm:space-x-5">
                 <button

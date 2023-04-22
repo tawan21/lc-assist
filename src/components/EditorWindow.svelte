@@ -109,5 +109,5 @@
   bind:this={editor}
   on:keypress={handleKeyPress}
   on:keyup={handleKeyUp}
-  class="min-h-screen min-w-full"
+  class="animate-fade-in-up min-h-screen min-w-full"
 />

@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
   import axios from "axios";
   import "../app.css";
-  import { Circle } from "svelte-loading-spinners";
   import { LayerCake, Svg } from "layercake";
   import Line from "./Line.svelte";
 
@@ -46,40 +45,49 @@
 </script>
 
 <div
-  class="max-w-full text-center flex flex-col mb-3 p-6 bg-white light:border light:border-gray-200 rounded-lg shadow dark:bg-lcdull text-gray-900 dark:text-white"
+  class="max-w-full animate-fade-in-up text-center flex flex-col mb-3 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-lcdull text-gray-900 dark:text-white dark:border-0"
 >
-  <h5
-    class="mb-2 text-2xl font-bold tracking-tight"
-  >
-    Contest Stats
-  </h5>
+  <h5 class="mb-2 text-2xl font-bold tracking-tight">Contest Stats</h5>
   <div class="flex flex-col sm:justify-evenly sm:flex-row">
-    <p class="mb-3 font-normal">
-      {#if loading}
-        <Circle color="orange" size="3" unit="rem" />
-      {:else if contestStats}
-        <div class="flex flex-col space-y-3 sm:space-y-9">
-          {#each Object.entries(output) as [key, value]}
-            <div>
-              <p>{key}</p>
-              <p class="mb-2 text-3xl font-extrabold">{value}</p>
+    {#if !loading && !contestStats}
+      <p class="mb-2 text-gray-400 text-xl font-extrabold">No Contests Given</p>
+    {:else}
+      <p class="mb-3 font-normal">
+        {#if loading}
+          <div class="animate-pulse flex flex-col">
+            <div class="grid grid-cols-3 gap-11">
+              <div class="h-2 bg-lc rounded col-span-3" />
+              <div class="h-2 bg-lc rounded col-span-3" />
+              <div class="h-2 bg-lc rounded col-span-3" />
+              <div class="h-2 bg-lc rounded col-span-3" />
+              <div class="h-2 bg-lc rounded col-span-3" />
+              <div class="h-2 bg-lc rounded col-span-3" />
             </div>
-          {/each}
-        </div>
-      {:else}
-        <p class="mb-2 text-xl font-extrabold">None given</p>
-      {/if}
-    </p>
-    <div class="w-full sm:w-64 h-32 sm:h-72">
-      {#if loading}
-        <Circle color="orange" size="3" unit="rem" />
-      {:else}
-        <LayerCake x="x" y="y" {data}>
-          <Svg>
-            <Line stroke="#ffa500" />
-          </Svg>
-        </LayerCake>
-      {/if}
-    </div>
+          </div>
+        {:else}
+          <div class="flex flex-col space-y-3 sm:space-y-9">
+            {#each Object.entries(output) as [key, value]}
+              <div>
+                <p>{key}</p>
+                <p class="mb-2 text-3xl font-extrabold">{value}</p>
+              </div>
+            {/each}
+          </div>
+        {/if}
+      </p>
+      <div class="w-full sm:w-64 h-32 sm:h-72">
+        {#if loading}
+          <div class="animate-pulse flex flex-col">
+            <div class="w-full sm:w-64 h-32 sm:h-72 bg-lc" />
+          </div>
+        {:else}
+          <LayerCake x="x" y="y" {data}>
+            <Svg>
+              <Line stroke="#ffa500" />
+            </Svg>
+          </LayerCake>
+        {/if}
+      </div>
+    {/if}
   </div>
 </div>

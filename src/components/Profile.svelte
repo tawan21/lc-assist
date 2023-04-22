@@ -1,13 +1,20 @@
 <script>
-  import { doc, getDoc, setDoc } from "firebase/firestore";
+  import {
+    collection,
+    doc,
+    getCountFromServer,
+    getDoc,
+    setDoc,
+  } from "firebase/firestore";
   import { onMount } from "svelte";
   import { db } from "../firebase";
-  import { Circle } from "svelte-loading-spinners";
+  import moment from "moment";
 
   let user,
     needC = false,
     leet_sesh = null,
     leet_csrf = null,
+    tries,
     linkBtn,
     loading = false;
 
@@ -39,16 +46,31 @@
       leet_sesh = dt.leetcodeSession;
       leet_csrf = dt.leetcodeCsrf;
     }
+    const day = -moment("1970-01-01", "YYYY-MM-DD").diff(
+      moment().startOf("day"),
+      "days",
+      false
+    );
+    const qs = await getCountFromServer(
+      collection(db, `submissions/${user.email}/${d}`)
+    );
+    tries = qs.data().count;
     loading = false;
   };
 </script>
 
 <div
-  class="min-w-full mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+  class="min-w-full animate-fade-in-up mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-lcdull dark:border-0"
 >
   <div class="flex flex-col items-center pb-10 space-y-5">
     {#if loading}
-      <Circle color="orange" size="3" unit="rem" />
+      <div class="animate-pulse flex flex-col mb-3">
+        <div class="rounded-full mb-7 bg-lc h-24 w-24" />
+        <div class="grid grid-cols-3 gap-9">
+          <div class="h-2 bg-lc rounded col-span-3" />
+          <div class="h-2 bg-lc rounded col-span-3" />
+        </div>
+      </div>
     {:else if user}
       <img
         alt="avatar"
@@ -79,6 +101,10 @@
           bind:this={linkBtn}
           disabled={leet_sesh === "" || leet_csrf === ""}>Link</button
         >
+      {:else}
+        <p class="text-black dark:text-white">
+          <span class="font-semibold text-lg">{tries}</span> question(s) tried today
+        </p>
       {/if}
     {:else}
       <h5 class="text-xl font-medium text-gray-900 dark:text-white">

@@ -66,7 +66,7 @@
 
 <main>
   <div class="flex min-w-full justify-center items-center">
-    <div class="flex min-w-full flex-col bg-slate-900 p-4 sm:p-8 rounded-lg">
+    <div class="flex min-w-full flex-col bg-lcdull p-4 sm:p-8 rounded-lg">
       <div class="mb-4">
         <h5 class="font-bold text-gray-50 text-2xl sm:text-3xl text-center">
           Chat
@@ -140,7 +140,8 @@
         />
         <button
           on:click={sendMsg}
-          class="rounded-md px-3 py-2 bg-pink-700 text-gray-50 border-0 ml-2"
+          disabled={message === ""}
+          class="rounded-md px-3 py-2 bg-pink-700 hover:enabled:bg-pink-800 disabled:opacity-50 disabled:cursor-not-allowed text-gray-50 border-0 ml-2"
           >Send</button
         >
       </div>

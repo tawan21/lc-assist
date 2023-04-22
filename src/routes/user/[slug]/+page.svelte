@@ -5,7 +5,6 @@
   import Submissions from "../../../components/Submissions.svelte";
   import { onMount } from "svelte";
   import { page } from "$app/stores";
-  import { Circle } from "svelte-loading-spinners";
   import {
     collection,
     doc,
@@ -15,6 +14,7 @@
     where,
   } from "firebase/firestore";
   import { db } from "../../../firebase";
+  import IntersectionObserver from "svelte-intersection-observer";
 
   let user = $page.params.slug,
     userDeets = null,
@@ -24,13 +24,14 @@
     session,
     requested = false,
     reqBtn,
-    friends = false;
+    friends = false,
+    node;
 
   const getLeetcodeInfo = async () => {
     const response = await axios.get(
       `http://localhost:3000/api/lc/username/${user}`
     );
-    userDeets = response.data.data.matchedUser;
+    userDeets = response.data.matchedUser;
   };
 
   const getFriends = async (mail) => {
@@ -87,12 +88,17 @@
 </script>
 
 <div class="flex flex-col min-w-full">
-  <div
-    class="min-w-full mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
-  >
+  <div class="min-w-full mt-3 px-4 pt-4 max-w-sm">
     <div class="flex flex-col items-center pb-10 space-y-5">
       {#if loading}
-        <Circle color="orange" size="3" unit="rem" />
+        <div class="animate-pulse flex flex-col">
+          <div class="rounded-full mb-7 bg-lcdull h-24 w-24" />
+          <div class="grid grid-cols-3 gap-9">
+            <div class="h-2 bg-lcdull rounded col-span-3" />
+            <div class="h-2 bg-lcdull rounded col-span-3" />
+            <div class="h-2 bg-lcdull rounded col-span-3" />
+          </div>
+        </div>
       {:else if userDeets}
         <img
           alt="avatar"
@@ -106,10 +112,21 @@
         {/if}
         <h5 class="mb-1 font-medium text-gray-900 dark:text-gray-200">
           @{user}
-          {#if e}<span class="bg-green-700 px-1 rounded text-sm">LA User</span
-            >{/if}
+          {#if e}
+            <svg
+              class="w-4 h-4 inline-block text-green-500 dark:text-green-400 flex-shrink-0"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+              ><path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"
+              /></svg
+            >
+          {/if}
         </h5>
-        <span class="text-sm text-gray-500 dark:text-gray-400"
+        <span class="text-sm text-gray-400 dark:text-gray-200"
           >Rank <span class="font-bold">{userDeets.profile.ranking}</span></span
         >
         {#if e && session}
@@ -117,7 +134,7 @@
             {#if requested}
               <span class="bg-yellow-700 px-2 py-1 rounded">Requested</span>
             {:else if friends}
-              <span class="bg-violet-700 px-2 py-1 rounded">Friends</span>
+              <span class="bg-violet-700 px-2 py-1 rounded">Friend</span>
             {:else if data.mail !== session.email}
               <button
                 type="button"
@@ -139,8 +156,14 @@
     </div>
     {#if userDeets}
       <Contest {user} />
-      <Progress {user} />
-      <Submissions {user} />
+      <IntersectionObserver once let:intersecting element={node}>
+        <div bind:this={node}>
+          {#if intersecting}
+            <Progress {user} />
+            <Submissions {user} />
+          {/if}
+        </div>
+      </IntersectionObserver>
     {/if}
   </div>
 </div>

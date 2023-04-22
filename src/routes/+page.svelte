@@ -6,25 +6,26 @@
   import { onMount } from "svelte";
   import { doc, getDoc, setDoc } from "firebase/firestore";
   import { db } from "../firebase";
-  import { Circle } from "svelte-loading-spinners";
   import { goto } from "$app/navigation";
+  import IntersectionObserver from "svelte-intersection-observer";
 
   let u,
     user = null,
     userDeets = null,
     session = null,
     lcData = null,
-    loading = false;
+    loading = false,
+    node;
 
   const getLeetcodeInfo = async () => {
-    let response = await axios.get(
-      `http://localhost:3000/api/lc/user/${session}`
-    );
+    let response = await axios.post("http://localhost:3000/api/lc/user", {
+      session,
+    });
 
-    lcData = response.data.userStatus;
+    lcData = response.data.data.userStatus;
     user = lcData.username;
     response = await axios.get(`http://localhost:3000/api/lc/username/${user}`);
-    userDeets = response.data.data.matchedUser;
+    userDeets = response.data.matchedUser;
   };
 
   const getSession = async () => {
@@ -58,7 +59,14 @@
   <div class="min-w-full mt-3 px-4 pt-4 max-w-sm">
     <div class="flex flex-col items-center pb-10 space-y-5">
       {#if loading}
-        <Circle color="orange" size="3" unit="rem" />
+        <div class="animate-pulse flex flex-col">
+          <div class="rounded-full mb-7 bg-lcdull h-24 w-24" />
+          <div class="grid grid-cols-3 gap-9">
+            <div class="h-2 bg-lcdull rounded col-span-3" />
+            <div class="h-2 bg-lcdull rounded col-span-3" />
+            <div class="h-2 bg-lcdull rounded col-span-3" />
+          </div>
+        </div>
       {:else if lcData}
         <img
           alt="avatar"
@@ -73,15 +81,21 @@
         <h5 class="mb-1 font-medium text-gray-900 dark:text-gray-200">
           @{user}
         </h5>
-        <span class="text-sm text-gray-500 dark:text-gray-400"
+        <span class="text-sm text-gray-400 dark:text-gray-200"
           >Rank <span class="font-bold">{userDeets.profile.ranking}</span></span
         >
       {/if}
     </div>
     {#if user}
       <Contest {user} />
-      <Progress {user} />
-      <Submissions {user} />
+      <IntersectionObserver once let:intersecting element={node}>
+        <div bind:this={node}>
+          {#if intersecting}
+            <Progress {user} />
+            <Submissions {user} />
+          {/if}
+        </div>
+      </IntersectionObserver>
     {/if}
   </div>
 </div>

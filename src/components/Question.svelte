@@ -25,7 +25,7 @@
 </script>
 
 <div
-  class="mb-3 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 max-w-full"
+  class="animate-fade-in-up mb-3 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-lcdull max-w-full dark:border-0"
 >
   {#if loading}
     <Circle color="orange" size="3" unit="rem" />
@@ -35,7 +35,7 @@
     >
       {question.questionFrontendId}. {question.questionTitle} ({question.difficulty})
     </h5>
-    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 overflow-auto">
+    <p class="mb-3 font-normal text-gray-400 dark:text-gray-200 overflow-auto">
       {@html question.content}
     </p>
   {:else}

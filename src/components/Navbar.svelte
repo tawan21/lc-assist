@@ -1,6 +1,13 @@
 <script>
   import { auth, googleProvider } from "../firebase";
-  import { signInWithPopup, signOut, GoogleAuthProvider } from "firebase/auth";
+  import {
+    signInWithPopup,
+    signOut,
+    GoogleAuthProvider,
+    getAuth,
+    setPersistence,
+    browserSessionPersistence,
+  } from "firebase/auth";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
@@ -15,29 +22,32 @@
   });
 
   const login = () => {
-    signInWithPopup(auth, googleProvider)
-      .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const usr = result.user;
-        sessionStorage.user = JSON.stringify(usr);
-        loggedIn = true;
-        goto("/profile");
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
-      });
+    const auth = getAuth();
+    setPersistence(auth, browserSessionPersistence).then(() => {
+      return signInWithPopup(auth, googleProvider)
+        .then((result) => {
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          // The signed-in user info.
+          const usr = result.user;
+          sessionStorage.user = JSON.stringify(usr);
+          loggedIn = true;
+          goto("/profile");
+          // IdP data available using getAdditionalUserInfo(result)
+          // ...
+        })
+        .catch((error) => {
+          // Handle Errors here.
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // The email of the user's account used.
+          const email = error.customData.email;
+          // The AuthCredential type that was used.
+          const credential = GoogleAuthProvider.credentialFromError(error);
+          // ...
+        });
+    });
   };
 
   const logout = () => {
@@ -120,7 +130,7 @@
               href="/"
               class={`${
                 pg === "/"
-                  ? "bg-gray-900 text-white"
+                  ? "bg-lc text-white"
                   : "text-gray-300 hover:bg-gray-700 hover:text-white"
               } rounded-md px-3 py-2 text-sm font-medium`}
               aria-current="page"
@@ -130,7 +140,7 @@
               href="/profile"
               class={`${
                 pg === "/profile"
-                  ? "bg-gray-900 text-white"
+                  ? "bg-lc text-white"
                   : "text-gray-300 hover:bg-gray-700 hover:text-white"
               } rounded-md px-3 py-2 text-sm font-medium`}
               aria-current="page"
@@ -140,7 +150,7 @@
               href="/question"
               class={`${
                 pg === "/question"
-                  ? "bg-gray-900 text-white"
+                  ? "bg-lc text-white"
                   : "text-gray-300 hover:bg-gray-700 hover:text-white"
               } rounded-md px-3 py-2 text-sm font-medium`}
               aria-current="page"
@@ -150,7 +160,7 @@
               href="/friends"
               class={`${
                 pg === "/friends"
-                  ? "bg-gray-900 text-white"
+                  ? "bg-lc text-white"
                   : "text-gray-300 hover:bg-gray-700 hover:text-white"
               } rounded-md px-3 py-2 text-sm font-medium`}
               aria-current="page"
@@ -168,7 +178,7 @@
             {#if loggedIn}
               <button
                 type="button"
-                class="flex text-red-400 border-2 border-white hover:bg-red-600 hover:text-white border-opacity-40 px-1 sm:px-2 py-1 rounded-full bg-gray-800 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                class="flex text-red-400 border-2 border-white hover:bg-red-600 hover:text-white border-opacity-20 px-1 sm:px-2 py-1 rounded-full bg-lc text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 id="user-menu-button"
                 aria-expanded="false"
                 aria-haspopup="true"
@@ -178,7 +188,7 @@
             {:else}
               <button
                 type="button"
-                class="flex text-green-400 border-2 border-white hover:bg-green-600 hover:text-white border-opacity-40 px-1 sm:px-2 py-1 rounded-full bg-gray-800 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                class="flex text-green-400 border-2 border-white hover:bg-green-600 hover:text-white border-opacity-20 px-1 sm:px-2 py-1 rounded-full bg-lc text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 id="user-menu-button"
                 aria-expanded="false"
                 aria-haspopup="true"
@@ -201,7 +211,7 @@
           href="/"
           class={`${
             pg === "/"
-              ? "bg-gray-900 text-white"
+              ? "bg-lc text-white"
               : "text-gray-300 hover:bg-gray-700 hover:text-white"
           } rounded-md px-2 py-1 text-xs font-medium`}
           aria-current="page"
@@ -211,7 +221,7 @@
           href="/profile"
           class={`${
             pg === "/profile"
-              ? "bg-gray-900 text-white"
+              ? "bg-lc text-white"
               : "text-gray-300 hover:bg-gray-700 hover:text-white"
           } rounded-md px-2 py-1 text-xs font-medium`}
           aria-current="page"
@@ -221,7 +231,7 @@
           href="/question"
           class={`${
             pg === "/question"
-              ? "bg-gray-900 text-white"
+              ? "bg-lc text-white"
               : "text-gray-300 hover:bg-gray-700 hover:text-white"
           } rounded-md px-2 py-1 text-xs font-medium`}
           aria-current="page"
@@ -231,7 +241,7 @@
           href="/friends"
           class={`${
             pg === "/friends"
-              ? "bg-gray-900 text-white"
+              ? "bg-lc text-white"
               : "text-gray-300 hover:bg-gray-700 hover:text-white"
           } rounded-md px-2 py-1 text-xs font-medium`}
           aria-current="page"

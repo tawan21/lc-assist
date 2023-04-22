@@ -18,7 +18,15 @@
 </div>
 
 <style lang="postcss">
-    :global(html) {
-        background-color: theme(colors.lc);
+    @media (prefers-color-scheme: dark) {
+        :global(html) {
+            background-color: theme(colors.lc);
+        }
+    }
+
+    @media (prefers-color-scheme: light) {
+        :global(html) {
+            background-color: theme(colors.gray.200);
+        }
     }
 </style>
