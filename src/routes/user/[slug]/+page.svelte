@@ -23,7 +23,6 @@
     data,
     session,
     requested = false,
-    reqBtn,
     friends = false,
     node;
 
@@ -43,8 +42,8 @@
     );
     const collecr = await getDocs(
       query(
-        collection(db, `users/${session.email}/requests`),
-        where("mail", "==", mail)
+        collection(db, `users/${data.mail}/requests`),
+        where("mail", "==", session.email)
       )
     );
     if (!collecr.empty) requested = true;
@@ -62,7 +61,7 @@
       { merge: true }
     );
 
-    reqBtn.innerText = "Requested";
+    requested = true;
   };
 
   onMount(async () => {
@@ -130,21 +129,22 @@
           >Rank <span class="font-bold">{userDeets.profile.ranking}</span></span
         >
         {#if e && session}
-          <div class="text-gray-900 font-bold dark:text-gray-200">
-            {#if requested}
-              <span class="bg-yellow-700 px-2 py-1 rounded">Requested</span>
-            {:else if friends}
-              <span class="bg-violet-700 px-2 py-1 rounded">Friend</span>
-            {:else if data.mail !== session.email}
-              <button
-                type="button"
-                bind:this={reqBtn}
-                on:click={makeRequest}
-                class="bg-blue-600 hover:bg-blue-800 text-white px-3 py-2 rounded focus:outline-none focus:shadow-outline text-xs sm:text-base"
-                >Request</button
-              >
-            {/if}
-          </div>
+          {#key requested}
+            <div class="text-gray-900 font-bold dark:text-gray-200">
+              {#if requested}
+                <span class="bg-yellow-700 px-2 py-1 rounded">Requested</span>
+              {:else if friends}
+                <span class="bg-violet-700 px-2 py-1 rounded">Friend</span>
+              {:else if data.mail !== session.email}
+                <button
+                  type="button"
+                  on:click={makeRequest}
+                  class="bg-blue-600 hover:bg-blue-800 text-white px-2.5 py-1.5 rounded focus:outline-none focus:shadow-outline text-xs sm:text-base"
+                  >Request</button
+                >
+              {/if}
+            </div>
+          {/key}
         {/if}
       {:else}
         <h5

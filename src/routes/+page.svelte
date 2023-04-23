@@ -29,17 +29,13 @@
   };
 
   const getSession = async () => {
-    const d = await getDoc(
-      doc(db, "lc-session", u.email, "private", "identifiers")
-    );
-    if (d.exists()) {
-      session = d.data().leetcodeSession;
-      await getLeetcodeInfo();
-    }
+    session = sessionStorage.session;
+    await getLeetcodeInfo();
   };
 
   onMount(async () => {
-    if (!sessionStorage.getItem("user")) goto("/profile");
+    if (!sessionStorage.getItem("user") || !sessionStorage.getItem("phrase"))
+      goto("/profile");
     loading = true;
     u = JSON.parse(sessionStorage.user);
     await getSession();

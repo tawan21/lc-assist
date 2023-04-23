@@ -55,6 +55,9 @@
       .then(() => {
         loggedIn = false;
         sessionStorage.removeItem("user");
+        sessionStorage.removeItem("session");
+        sessionStorage.removeItem("csrf");
+        sessionStorage.removeItem("phrase");
         goto("/profile");
       })
       .catch((error) => {
