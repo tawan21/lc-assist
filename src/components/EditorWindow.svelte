@@ -25,6 +25,8 @@
     unsubscribe = onSnapshot(
       doc(db, `snippets/${user}/${ques}/${lang.value}`),
       (doc) => {
+        if (!doc.exists()) return;
+
         const data = doc.data();
         const author = data.editBy;
         if (author === u) return;

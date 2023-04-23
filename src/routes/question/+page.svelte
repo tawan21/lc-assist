@@ -65,45 +65,89 @@
 
   const interpret = async () => {
     loading = true;
-    const response = await axios.post(
-      `http://localhost:3000/api/lc/interpret/${ques}`,
-      {
-        question_id: question.questionId,
-        lang: lang.value,
-        typed_code: finalCode,
-        judge_type: "large",
-        data_input: question.exampleTestcases,
-      },
-      {
-        headers: {
-          session_id: sessionStorage.session,
-          csrf_token: sessionStorage.csrf,
+    let response = await fetch("/api/evaluate/run", {
+      method: "POST",
+      body: JSON.stringify({
+        data: {
+          question_id: question.questionId,
+          lang: lang.value,
+          typed_code: finalCode,
+          judge_type: "large",
+          data_input: question.exampleTestcases,
         },
-      }
-    );
+        headers: {
+          ls: sessionStorage.session,
+          lc: sessionStorage.csrf,
+        },
+        ques: ques,
+      }),
+    });
+    response = await response.json();
+    const id = response.interpret_id;
 
-    outputData = response.data;
+    let result = null,
+      ct = 5;
+
+    do {
+      --ct;
+      response = await fetch("/api/evaluate/check", {
+        method: "POST",
+        body: JSON.stringify({
+          headers: {
+            ls: sessionStorage.session,
+            lc: sessionStorage.csrf,
+          },
+          id: id,
+          prob: ques,
+        }),
+      });
+      result = await response.json();
+    } while (result.state !== "SUCCESS" || ct > 0);
+
+    outputData = result;
     loading = false;
   };
 
   const submit = async () => {
     loading = true;
-    const response = await axios.post(
-      `http://localhost:3000/api/lc/submit/${ques}`,
-      {
-        question_id: question.questionId,
-        lang: lang.value,
-        typed_code: finalCode,
-      },
-      {
-        headers: {
-          session_id: sessionStorage.session,
-          csrf_token: sessionStorage.csrf,
+    let response = await fetch("/api/evaluate/submit", {
+      method: "POST",
+      body: JSON.stringify({
+        data: {
+          question_id: question.questionId,
+          lang: lang.value,
+          typed_code: finalCode,
         },
-      }
-    );
+        headers: {
+          ls: sessionStorage.session,
+          lc: sessionStorage.csrf,
+        },
+        ques: ques,
+      }),
+    });
+    response = await response.json();
+    const id = response.submission_id;
 
-    outputData = response.data;
+    let result = null,
+      ct = 5;
+
+    do {
+      --ct;
+      response = await fetch("/api/evaluate/check", {
+        method: "POST",
+        body: JSON.stringify({
+          headers: {
+            ls: sessionStorage.session,
+            lc: sessionStorage.csrf,
+          },
+          id: id,
+          prob: ques,
+        }),
+      });
+      result = await response.json();
+    } while (result.state !== "SUCCESS" || ct > 0);
+
+    outputData = result;
 
     if (outputData.run_success) {
       const d = -moment("1970-01-01", "YYYY-MM-DD").diff(
@@ -133,6 +177,9 @@
   });
 </script>
 
+<svelte:head>
+  <title>Solve - LC Assistant</title>
+</svelte:head>
 <div class="flex flex-col min-w-full">
   <input
     type="text"
@@ -261,18 +308,18 @@
     </div>
     {#if outputData && !("code_answer" in outputData) && outputData.status_code === 10}
       <div
-        class="metrics-container mt-4 flex flex-col space-y-3 p-5 rounded-md border-gray-300 border-2"
+        class="metrics-container text-black dark:text-white mt-4 flex flex-col space-y-3 p-5 rounded-md border-gray-300 border-2"
       >
         <p class="text-sm">
           Runtime: beats <span
-            class="font-semibold px-2 py-1 rounded-md bg-gray-300"
+            class="font-semibold px-2 py-1 rounded-md bg-gray-300 text-black"
           >
             {Math.round(outputData.runtime_percentile)}%
           </span>
         </p>
         <p class="text-sm">
           Memory: beats <span
-            class="font-semibold px-2 py-1 rounded-md bg-gray-300"
+            class="font-semibold px-2 py-1 rounded-md bg-gray-300 text-black"
           >
             {Math.round(outputData.memory_percentile)}%
           </span>

@@ -27,9 +27,11 @@
     node;
 
   const getLeetcodeInfo = async () => {
-    const response = await axios.get(
-      `http://localhost:3000/api/lc/username/${user}`
-    );
+    let response = await fetch("/api/user", {
+      method: "POST",
+      body: JSON.stringify({ user }),
+    });
+    response = await response.json();
     userDeets = response.data.matchedUser;
   };
 
@@ -86,6 +88,9 @@
   });
 </script>
 
+<svelte:head>
+  <title>@{user} - LC Assistant</title>
+</svelte:head>
 <div class="flex flex-col min-w-full">
   <div class="min-w-full mt-3 px-4 pt-4 max-w-sm">
     <div class="flex flex-col items-center pb-10 space-y-5">

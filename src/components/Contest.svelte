@@ -22,9 +22,11 @@
   });
 
   const getContestStats = async () => {
-    const response = await axios.get(
-      `http://localhost:3000/api/lc/contest_stats/${user}`
-    );
+    let response = await fetch("/api/contest", {
+      method: "POST",
+      body: JSON.stringify({ user }),
+    });
+    response = await response.json();
 
     contestStats = response.data.userContestRanking;
     const contestHistory = Object.values(

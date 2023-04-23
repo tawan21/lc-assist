@@ -21,15 +21,19 @@
   });
 
   const getSubmissions = async () => {
-    let response = await axios.get(
-      `http://localhost:3000/api/lc/submissions/${user}`
-    );
+    let response = await fetch("/api/submissions", {
+      method: "POST",
+      body: JSON.stringify({ user }),
+    });
+    response = await response.json();
 
     submissions = response.data.recentAcSubmissionList;
 
-    response = await axios.get(
-      `http://localhost:3000/api/lc/submission_calendar/${user}`
-    );
+    response = await fetch("/api/submissions/calendar", {
+      method: "POST",
+      body: JSON.stringify({ user }),
+    });
+    response = await response.json();
     const { streak, submissionCalendar, totalActiveDays } =
       response.data.matchedUser.userCalendar;
     stk = streak;

@@ -1,10 +1,9 @@
 <script>
-  import axios from "axios";
   import Contest from "../components/Contest.svelte";
   import Submissions from "../components/Submissions.svelte";
   import Progress from "../components/Progress.svelte";
   import { onMount } from "svelte";
-  import { doc, getDoc, setDoc } from "firebase/firestore";
+  import { doc, setDoc } from "firebase/firestore";
   import { db } from "../firebase";
   import { goto } from "$app/navigation";
   import IntersectionObserver from "svelte-intersection-observer";
@@ -18,13 +17,19 @@
     node;
 
   const getLeetcodeInfo = async () => {
-    let response = await axios.post("http://localhost:3000/api/lc/user", {
-      session,
+    let response = await fetch("/api", {
+      method: "POST",
+      body: JSON.stringify({ session }),
     });
 
-    lcData = response.data.data.userStatus;
+    response = await response.json();
+    lcData = response.data.userStatus;
     user = lcData.username;
-    response = await axios.get(`http://localhost:3000/api/lc/username/${user}`);
+    response = await fetch("/api/user", {
+      method: "POST",
+      body: JSON.stringify({ user }),
+    });
+    response = await response.json();
     userDeets = response.data.matchedUser;
   };
 
@@ -51,6 +56,9 @@
   });
 </script>
 
+<svelte:head>
+  <title>Dashboard - LC Assistant</title>
+</svelte:head>
 <div class="flex flex-col min-w-full">
   <div class="min-w-full mt-3 px-4 pt-4 max-w-sm">
     <div class="flex flex-col items-center pb-10 space-y-5">

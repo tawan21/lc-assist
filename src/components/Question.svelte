@@ -6,6 +6,7 @@
   export let ques,
     snippet,
     question = null,
+    err = true,
     loading = ques !== "";
 
   onMount(async () => {
@@ -14,11 +15,17 @@
   });
 
   const getQuestion = async () => {
-    const response = await axios.get(
-      `http://localhost:3000/api/lc/question/${ques}`
-    );
+    err = false;
+    let response = await fetch("/api/question", {
+      method: "POST",
+      body: JSON.stringify({ ques }),
+    });
+    response = await response.json();
 
-    if (response.status !== 200 || !response.data.question) return;
+    if (response.errors) {
+      err = true;
+      return;
+    }
     question = response.data.question;
     snippet = response.data.question.codeSnippets;
   };
@@ -29,7 +36,7 @@
 >
   {#if loading}
     <Circle color="orange" size="3" unit="rem" />
-  {:else if Object.keys(question).length !== 0 || question.constructor !== Object}
+  {:else if !err}
     <h5
       class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
     >

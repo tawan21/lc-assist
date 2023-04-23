@@ -16,17 +16,22 @@
   });
 
   const getProgress = async () => {
-    let response = await axios.get(
-      `http://localhost:3000/api/lc/solved/${user}`
-    );
+    let response = await fetch("/api/progress/all", {
+      method: "POST",
+      body: JSON.stringify({ user }),
+    });
+    response = await response.json();
 
     progress = response.data.matchedUser.submitStatsGlobal.acSubmissionNum;
 
-    response = await axios.get(
-      `http://localhost:3000/api/lc/skill_stats/${user}`
-    );
+    response = await fetch("/api/progress", {
+      method: "POST",
+      body: JSON.stringify({ user }),
+    });
+    response = await response.json();
 
-    skill = response.data;
+    skill = response.data.matchedUser.tagProblemCounts;
+    console.log(progress);
     Object.values(skill).forEach((o) => {
       o.sort((a, b) => (a.problemsSolved > b.problemsSolved ? -1 : 1));
     });

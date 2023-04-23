@@ -2,7 +2,6 @@
   import { doc, onSnapshot, setDoc } from "firebase/firestore";
   import { onDestroy, onMount } from "svelte";
   import { db } from "../../firebase";
-  import { v4 as uuidv4 } from "uuid";
 
   let messages = [],
     message = "",
@@ -39,7 +38,6 @@
     await setDoc(
       doc(db, "chat-rooms", `${participants[0]},${participants[1]}`),
       {
-        id: uuidv4(),
         messages: messages,
       },
       { merge: true }
@@ -64,6 +62,9 @@
   });
 </script>
 
+<svelte:head>
+  <title>Chat - LC Assistant</title>
+</svelte:head>
 <main>
   <div class="flex min-w-full justify-center items-center">
     <div class="flex min-w-full flex-col bg-lcdull p-4 sm:p-8 rounded-lg">
