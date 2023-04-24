@@ -133,12 +133,12 @@
               placeholder="Your Encryption Passphrase"
               bind:value={encPhrase}
             />
-            <span class="text-gray-400 text-xs sm:text-sm ml-1"
-              >The above passphrase will be used to encrypt the identifiers
+            <div class="text-gray-400 text-xs sm:text-sm ml-1">
+              The above passphrase will be used to encrypt the identifiers
               before storing. The passphrase itself will NEVER be stored.
               Remember it as it will be required for decrypting the identifiers
-              each time.</span
-            >
+              each time.
+            </div>
           </div>
           <button
             type="button"

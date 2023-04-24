@@ -1,7 +1,5 @@
 <script>
   import { onMount } from "svelte";
-  import axios from "axios";
-  import "../app.css";
 
   export let user;
 
@@ -31,7 +29,6 @@
     response = await response.json();
 
     skill = response.data.matchedUser.tagProblemCounts;
-    console.log(progress);
     Object.values(skill).forEach((o) => {
       o.sort((a, b) => (a.problemsSolved > b.problemsSolved ? -1 : 1));
     });
@@ -79,16 +76,18 @@
           </div>
         </div>
       {:else}
-        <div class="flex flex-col space-y-1 sm:space-y-5">
-          <select
-            bind:value={level}
-            class="bg-gray-100 capitalize border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block min-w-full py-2 px-1 sm:py-3 sm:px-2 dark:bg-lc dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:border-0"
-          >
-            {#each Object.keys(skill) as opt}
-              <option class="capitalize">{opt}</option>
-            {/each}
-          </select>
-          <div>
+        <div class="flex flex-col space-y-9 sm:space-y-5">
+          <div class="flex justify-center mt-4 sm:mt-2">
+            <select
+              bind:value={level}
+              class="bg-gray-100 capitalize border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block py-2 px-1 sm:px-2 dark:bg-lc dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:border-0"
+            >
+              {#each Object.keys(skill) as opt}
+                <option class="capitalize">{opt}</option>
+              {/each}
+            </select>
+          </div>
+          <div class="flex flex-col">
             {#each skill[`${level}`].slice(0, 3) as v}
               <p>{v.tagName}</p>
               <p class="mb-2 text-3xl font-extrabold">

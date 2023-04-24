@@ -1,5 +1,4 @@
 <script>
-  import axios from "axios";
   import Contest from "../../../components/Contest.svelte";
   import Progress from "../../../components/Progress.svelte";
   import Submissions from "../../../components/Submissions.svelte";

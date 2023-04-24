@@ -1,9 +1,7 @@
 <script>
   import { onMount } from "svelte";
-  import axios from "axios";
-  import "../app.css";
-  import SvelteHeatmap from "svelte-heatmap";
   import moment from "moment";
+  import { Heatmap } from "@douganderson444/calendar-activity-heatmap";
 
   export let user;
 
@@ -110,7 +108,7 @@
 </div>
 
 <div
-  class="min-w-full animate-fade-in-up bg-gray-50 dark:bg-lcdull p-4 sm:p-8 rounded"
+  class="min-w-full animate-fade-in-up bg-gray-50 dark:bg-lcdull p-4 rounded"
 >
   {#if loading}
     <div class="animate-pulse flex flex-col">
@@ -145,36 +143,15 @@
           </div>
         </div>
       </div>
-      <div class="sm:hidden">
-        <SvelteHeatmap
-          cellGap={2}
-          cellRadius={2}
-          colors={["#FCAE1E", "#ED7117", "#B56727", "#8D4004"]}
-          {data}
-          dayLabelWidth={20}
-          emptyColor={"#ecedf0"}
-          endDate={moment().toDate()}
-          fontColor={"#B2BEB5"}
-          monthGap={20}
-          monthLabelHeight={20}
-          startDate={moment().subtract(93, "days").toDate()}
-          view={"daily"}
-        />
-      </div>
       <div class="hidden sm:block">
-        <SvelteHeatmap
-          cellGap={2}
-          cellRadius={2}
-          colors={["#FCAE1E", "#ED7117", "#B56727", "#8D4004"]}
+        <Heatmap {data} fontColor={"#B2BEB5"} fontSize={7} />
+      </div>
+      <div class="sm:hidden">
+        <Heatmap
           {data}
-          dayLabelWidth={20}
-          emptyColor={"#ecedf0"}
-          endDate={moment().toDate()}
           fontColor={"#B2BEB5"}
-          monthGap={20}
-          monthLabelHeight={20}
-          startDate={moment().subtract(366, "days").toDate()}
-          view={"daily"}
+          fontSize={7}
+          startDate={moment().subtract("183", "days").toDate()}
         />
       </div>
     </div>

@@ -11,7 +11,6 @@
   import Question from "../../components/Question.svelte";
   import { db } from "../../firebase";
   import { onMount } from "svelte";
-  import axios from "axios";
   import { Circle } from "svelte-loading-spinners";
   import moment from "moment";
 

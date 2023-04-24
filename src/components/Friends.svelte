@@ -97,6 +97,10 @@
                   class="font-bold text-xs sm:text-2xl flex flex-col items-center pb-10 mr-1"
                   >{friend.mail}</span
                 >
+                <p class="text-xs sm:text-sm">
+                  <span class="font-semibold sm:text-lg">{ct[friend.mail]}</span> question(s)
+                  tried today
+                </p>
                 <span class="text-xs"
                   >added <span class="font-bold"
                     >{new Date(friend.added.seconds * 1000).toLocaleString(
@@ -111,12 +115,6 @@
                     )}</span
                   ></span
                 >
-              </div>
-              <div>
-                <p>
-                  <span class="font-semibold text-lg">{ct[friend.mail]}</span> question(s)
-                  tried today
-                </p>
               </div>
               <div class="flex flex-col sm:flex-row sm:space-x-5">
                 <button

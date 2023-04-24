@@ -108,31 +108,33 @@
                     ></span
                   >
                 </div>
-                <button
-                  on:click={addFriend(friend.mail)}
-                  type="button"
-                  class="bg-green-500 mb-3 hover:bg-green-700 sm:font-semibold px-4 py-2 rounded-full focus:outline-none focus:shadow-outline"
-                  >Accept</button
-                >
-                <button
-                  on:click={removeRequest(friend.mail)}
-                  type="button"
-                  class="bg-red-500 mb-3 hover:bg-red-700 sm:font-semibold p-1 rounded-full focus:outline-none focus:shadow-outline"
-                  ><svg
-                    class="block h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    aria-hidden="true"
+                <div class="flex flex-col sm:flex-row sm:space-x-5">
+                  <button
+                    on:click={addFriend(friend.mail)}
+                    type="button"
+                    class="bg-green-500 text-xs sm:text-base mb-3 hover:bg-green-700 sm:font-semibold px-2 sm:px-4 py-1 sm:py-2 rounded-full focus:outline-none focus:shadow-outline"
+                    >Allow</button
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg></button
-                >
+                  <button
+                    on:click={removeRequest(friend.mail)}
+                    type="button"
+                    class="bg-red-500 mb-3 hover:bg-red-700 sm:font-semibold px-2.5 sm:px-2 sm:py-2 rounded-full focus:outline-none focus:shadow-outline"
+                    ><svg
+                      class="block h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg></button
+                  >
+                </div>
               </div>
             {/each}
           </div>

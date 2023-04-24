@@ -1,7 +1,5 @@
 <script>
   import { onMount } from "svelte";
-  import axios from "axios";
-  import "../app.css";
   import { LayerCake, Svg } from "layercake";
   import Line from "./Line.svelte";
 

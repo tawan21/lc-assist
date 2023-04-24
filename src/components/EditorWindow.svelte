@@ -1,7 +1,6 @@
 <script>
   import loader from "@monaco-editor/loader";
   import {
-    collection,
     doc,
     getDoc,
     onSnapshot,
