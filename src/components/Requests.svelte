@@ -118,7 +118,7 @@
                   <button
                     on:click={removeRequest(friend.mail)}
                     type="button"
-                    class="bg-red-500 mb-3 hover:bg-red-700 sm:font-semibold px-2.5 sm:px-2 sm:py-2 rounded-full focus:outline-none focus:shadow-outline"
+                    class="bg-red-500 mb-3 hover:bg-red-700 sm:font-semibold px-3 sm:px-2 sm:py-2 rounded-full focus:outline-none focus:shadow-outline"
                     ><svg
                       class="block h-6 w-6"
                       fill="none"

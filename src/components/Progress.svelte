@@ -39,8 +39,8 @@
   class="max-w-full animate-fade-in-up text-center mb-3 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-lcdull text-gray-900 dark:text-white dark:border-0"
 >
   <h5 class="mb-2 text-2xl font-bold tracking-tight">Progress</h5>
-  <div class="flex justify-evenly">
-    <p class="mb-3 font-normal">
+  <div class="grid grid-cols-2 justify-center">
+    <p class="mb-3 font-normal col-span-1">
       {#if loading}
         <div class="animate-pulse flex flex-col">
           <div class="grid grid-cols-3 gap-6">
@@ -56,8 +56,8 @@
         </div>
       {:else}
         {#each Object.entries(progress) as [_, value]}
-          <p class="mt-3 sm:mt-0">{value.difficulty}</p>
-          <p class="mb-2 text-3xl font-extrabold">{value.count}</p>
+          <p class="mt-3 text-sm sm:text-base sm:mt-0">{value.difficulty}</p>
+          <p class="mb-2 text-xl sm:text-3xl font-extrabold">{value.count}</p>
         {/each}
       {/if}
     </p>
@@ -76,7 +76,7 @@
           </div>
         </div>
       {:else}
-        <div class="flex flex-col space-y-9 sm:space-y-5">
+        <div class="flex flex-col space-y-7 sm:space-y-5">
           <div class="flex justify-center mt-4 sm:mt-2">
             <select
               bind:value={level}
@@ -89,8 +89,8 @@
           </div>
           <div class="flex flex-col">
             {#each skill[`${level}`].slice(0, 3) as v}
-              <p>{v.tagName}</p>
-              <p class="mb-2 text-3xl font-extrabold">
+              <p class="text-xs sm:text-sm">{v.tagName}</p>
+              <p class="mb-2 text-xl sm:text-3xl font-extrabold">
                 {v.problemsSolved}
               </p>
             {/each}

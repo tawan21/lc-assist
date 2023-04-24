@@ -1,11 +1,6 @@
 <script>
   import loader from "@monaco-editor/loader";
-  import {
-    doc,
-    getDoc,
-    onSnapshot,
-    setDoc,
-  } from "firebase/firestore";
+  import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
   import { onDestroy, onMount } from "svelte";
   import { db } from "../firebase";
 
@@ -102,7 +97,7 @@
     timer = setTimeout(() => {
       done = true;
       storeCode();
-    }, 1000);
+    }, 500);
   };
 </script>
 

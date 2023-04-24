@@ -14,7 +14,10 @@
     unsubscribe = onSnapshot(
       doc(db, `chat-rooms/${participants[0]},${participants[1]}`),
       (doc) => {
-        if (doc.exists()) messages = doc.data().messages;
+        if (doc.exists()) {
+          messages = doc.data().messages;
+          nm.focus();
+        }
       }
     );
   }
@@ -77,60 +80,70 @@
         </p>
       </div>
       <div
-        class="max-h-screen text-center overflow-auto mb-4 bg-gray-300 rounded-md px-4 py-4"
+        class="max-h-screen text-center mb-4 bg-gray-300 rounded-md px-4 py-4 flex flex-col-reverse overflow-auto"
       >
-        {#each messages as message, i}
-          {#if i}
-            {#if getDate(message.time.seconds, messages[i - 1].time.seconds) > 0}
-              <div class="flex justify-center">
-                <div
-                  class="text-xs sm:text-sm mt-6 text-white text-center px-2 py-1 rounded-full bg-gray-600"
-                >
-                  {new Date(message.time?.seconds * 1000).toLocaleString(
-                    "en-US",
-                    {
-                      month: "short",
-                      day: "2-digit",
-                    }
-                  )}
+        <div>
+          {#each messages as message, i}
+            {#if i}
+              {#if getDate(message.time.seconds, messages[i - 1].time.seconds) > 0}
+                <div class="flex justify-center">
+                  <div
+                    class="text-xs sm:text-sm mt-6 text-white text-center px-2 py-1 rounded-full bg-gray-600"
+                  >
+                    {new Date(message.time?.seconds * 1000).toLocaleString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "2-digit",
+                      }
+                    )}
+                  </div>
                 </div>
-              </div>
+              {/if}
+            {:else}
+              <span
+                class="text-xs sm:text-sm text-white px-2 py-1 rounded-full bg-gray-600"
+              >
+                {new Date(message.time?.seconds * 1000).toLocaleString(
+                  "en-US",
+                  {
+                    month: "short",
+                    day: "2-digit",
+                  }
+                )}
+              </span>
             {/if}
-          {:else}
-            <span
-              class="text-xs sm:text-sm text-white px-2 py-1 rounded-full bg-gray-600"
-            >
-              {new Date(message.time?.seconds * 1000).toLocaleString("en-US", {
-                month: "short",
-                day: "2-digit",
-              })}
-            </span>
-          {/if}
-          <div
-            class={`flex flex-col mt-3 ${
-              message.sentBy === user.email ? "items-end" : "items-start"
-            }`}
-          >
             <div
-              class={`w-fit px-3 py-1.5 ${
-                message.sentBy === user.email ? "bg-pink-700" : "bg-violet-700"
-              } rounded-xl sm:font-semibold text-white`}
-            >
-              {message.message}
-            </div>
-            <span
-              class={`text-gray-700 text-xs ${
-                message.sentBy === user.email ? "mr-1" : "ml-1"
+              class={`flex flex-col mt-3 ${
+                message.sentBy === user.email ? "items-end" : "items-start"
               }`}
             >
-              {new Date(message.time?.seconds * 1000).toLocaleString("en-US", {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              })}
-            </span>
-          </div>
-        {/each}
+              <div
+                class={`w-fit px-3 py-1.5 ${
+                  message.sentBy === user.email
+                    ? "bg-pink-700 text-right rounded-l-xl rounded-tr-xl"
+                    : "bg-violet-700 text-left rounded-r-xl rounded-tl-xl"
+                } sm:font-semibold text-white`}
+              >
+                {message.message}
+              </div>
+              <span
+                class={`text-gray-700 text-xs ${
+                  message.sentBy === user.email ? "mr-1" : "ml-1"
+                }`}
+              >
+                {new Date(message.time?.seconds * 1000).toLocaleString(
+                  "en-US",
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  }
+                )}
+              </span>
+            </div>
+          {/each}
+        </div>
       </div>
       <div class="w-full flex">
         <input
