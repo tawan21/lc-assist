@@ -80,7 +80,7 @@
         </p>
       </div>
       <div
-        class="max-h-screen text-center mb-4 bg-gray-300 rounded-md px-4 py-4 flex flex-col-reverse overflow-auto"
+        class="max-h-screen text-center mb-4 bg-gray-300 rounded-md px-4 py-4 flex flex-col-reverse overflow-x-hidden overflow-y-auto"
       >
         <div>
           {#each messages as message, i}
@@ -119,10 +119,10 @@
               }`}
             >
               <div
-                class={`w-fit px-3 py-1.5 ${
+                class={`w-fit break-all text-left px-3 py-1.5 ${
                   message.sentBy === user.email
-                    ? "bg-pink-700 text-right rounded-l-xl rounded-tr-xl"
-                    : "bg-violet-700 text-left rounded-r-xl rounded-tl-xl"
+                    ? "bg-pink-700 rounded-l-xl rounded-tr-xl"
+                    : "bg-violet-700 rounded-r-xl rounded-tl-xl"
                 } sm:font-semibold text-white`}
               >
                 {message.message}
