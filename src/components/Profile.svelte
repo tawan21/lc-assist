@@ -111,13 +111,13 @@
       {#key needC}
         {#if needC}
           <input
-            type="text"
+            type="password"
             class="shadow mb-3 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline"
             placeholder="LEETCODE_SESSION cookie"
             bind:value={leet_sesh}
           />
           <input
-            type="text"
+            type="password"
             class="shadow mb-3 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline"
             placeholder="csrftoken cookie"
             bind:value={leet_csrf}
@@ -128,7 +128,7 @@
         {#if needP}
           <div class="w-full">
             <input
-              type="text"
+              type="password"
               class="shadow mb-1 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:shadow-outline"
               placeholder="Your Encryption Passphrase"
               bind:value={encPhrase}
