@@ -39,10 +39,28 @@
     if (submissionCalendar !== "{}") {
       calendar = JSON.parse(submissionCalendar);
       const dt = [];
-      Object.keys(calendar).forEach((date) => {
-        dt.push({ date: moment(date * 1000).toDate(), value: calendar[date] });
-        subs += calendar[date];
-      });
+      for (
+        let m = moment()
+          .startOf("day")
+          .subtract(364, "days")
+          .add(330, "minutes");
+        m.diff(moment().startOf("day"), "days") <= 0;
+        m.add(1, "days")
+      ) {
+        const d = m.valueOf() * 0.001;
+        if (d in calendar) {
+          dt.push({
+            date: moment(d * 1000).toDate(),
+            value: calendar[d],
+          });
+          subs += calendar[d];
+        } else {
+          dt.push({
+            date: moment(d * 1000).toDate(),
+            value: 0,
+          });
+        }
+      }
       data = dt;
     }
   };
@@ -159,7 +177,7 @@
             {data}
             fontColor={"#B2BEB5"}
             fontSize={7}
-            startDate={data[0].date}
+            startDate={data[182].date}
           />
         </div>
       {/if}
