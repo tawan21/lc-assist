@@ -36,13 +36,15 @@
       response.data.matchedUser.userCalendar;
     stk = streak;
     days = totalActiveDays;
-    calendar = JSON.parse(submissionCalendar);
-    const dt = [];
-    Object.keys(calendar).forEach((date) => {
-      dt.push({ date: moment(date * 1000).toDate(), value: calendar[date] });
-      subs += calendar[date];
-    });
-    data = dt;
+    if (submissionCalendar !== "{}") {
+      calendar = JSON.parse(submissionCalendar);
+      const dt = [];
+      Object.keys(calendar).forEach((date) => {
+        dt.push({ date: moment(date * 1000).toDate(), value: calendar[date] });
+        subs += calendar[date];
+      });
+      data = dt;
+    }
   };
 
   const timeElapsed = (timestamp) => {
@@ -108,7 +110,7 @@
 </div>
 
 <div
-  class="min-w-full animate-fade-in-up bg-gray-50 dark:bg-lcdull p-4 rounded"
+  class="min-w-full animate-fade-in-up bg-gray-50 dark:bg-lcdull p-2 sm:p-4 rounded"
 >
   {#if loading}
     <div class="animate-pulse flex flex-col">
@@ -143,17 +145,24 @@
           </div>
         </div>
       </div>
-      <div class="hidden sm:block">
-        <Heatmap {data} fontColor={"#B2BEB5"} fontSize={7} />
-      </div>
-      <div class="sm:hidden">
-        <Heatmap
-          {data}
-          fontColor={"#B2BEB5"}
-          fontSize={7}
-          startDate={moment().subtract("183", "days").toDate()}
-        />
-      </div>
+      {#if data}
+        <div class="hidden sm:block">
+          <Heatmap
+            {data}
+            fontColor={"#B2BEB5"}
+            fontSize={7}
+            startDate={data[0].date}
+          />
+        </div>
+        <div class="sm:hidden">
+          <Heatmap
+            {data}
+            fontColor={"#B2BEB5"}
+            fontSize={7}
+            startDate={data[0].date}
+          />
+        </div>
+      {/if}
     </div>
   {/if}
 </div>
