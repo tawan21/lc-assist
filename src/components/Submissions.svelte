@@ -89,27 +89,9 @@
     {#if loading}
       <div class="animate-pulse flex flex-col">
         <div class="grid grid-cols-3 gap-4">
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
-          <div class="h-3 bg-lc rounded col-span-3" />
+          {#each { length: 21 } as _, i}
+            <div class="h-2 bg-lc rounded col-span-3" />
+          {/each}
         </div>
       </div>
     {:else}
@@ -133,13 +115,9 @@
   {#if loading}
     <div class="animate-pulse flex flex-col">
       <div class="grid grid-cols-3 gap-6">
-        <div class="h-2 bg-lc rounded col-span-3" />
-        <div class="h-2 bg-lc rounded col-span-3" />
-        <div class="h-2 bg-lc rounded col-span-3" />
-        <div class="h-2 bg-lc rounded col-span-3" />
-        <div class="h-2 bg-lc rounded col-span-3" />
-        <div class="h-2 bg-lc rounded col-span-3" />
-        <div class="h-2 bg-lc rounded col-span-3" />
+        {#each { length: 7 } as _, i}
+          <div class="h-2 bg-lc rounded col-span-3" />
+        {/each}
       </div>
     </div>
   {:else}

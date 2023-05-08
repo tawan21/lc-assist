@@ -1,27 +1,33 @@
 <script>
-  import { getContext } from "svelte";
+  import { onMount } from "svelte";
+  import { Chart } from "chart.js/auto";
 
-  const { data, xGet, yGet } = getContext("LayerCake");
+  let canvas;
+  export let data;
 
-  /** @type {String} [stroke='#ab00d6'] - The shape's fill color. This is technically optional because it comes with a default value but you'll likely want to replace it with your own color. */
-  export let stroke = "#ab00d6";
-
-  $: path =
-    "M" +
-    $data
-      .map((d) => {
-        return $xGet(d) + "," + $yGet(d);
-      })
-      .join("L");
+  onMount(() => {
+    const ctx = canvas.getContext("2d");
+    let graph = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: data.map((d) => d.x),
+        datasets: [
+          {
+            label: "Rating",
+            data: data.map((d) => d.y),
+            fill: false,
+            borderColor: "rgb(75, 192, 192)",
+            tension: 0.1,
+            pointRadius: 0,
+            pointHitRadius: 5,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+      },
+    });
+  });
 </script>
 
-<path class="path-line" d={path} {stroke} />
-
-<style>
-  .path-line {
-    fill: none;
-    stroke-linejoin: round;
-    stroke-linecap: round;
-    stroke-width: 2;
-  }
-</style>
+<canvas bind:this={canvas} />
