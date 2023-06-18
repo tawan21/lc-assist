@@ -127,21 +127,8 @@
                 <button
                   on:click={removeFriend(friend.mail)}
                   type="button"
-                  class="bg-red-500 mb-3 hover:bg-red-700 sm:font-semibold px-2.5 sm:px-2 sm:py-2 rounded-full focus:outline-none focus:shadow-outline"
-                  ><svg
-                    class="block h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg></button
+                  class="bg-red-500 text-xs sm:text-base mb-3 hover:bg-red-700 sm:font-semibold px-2 sm:px-4 py-1 sm:py-2 rounded-full focus:outline-none focus:shadow-outline"
+                  >Remove</button
                 >
               </div>
             </div>
