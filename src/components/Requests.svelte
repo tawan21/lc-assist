@@ -70,9 +70,11 @@
 </script>
 
 <div>
-  <h5 class="text-xl text-black dark:text-white font-semibold">Requests</h5>
+  <h5 class="text-xl text-black dark:text-white font-semibold ml-2">
+    Requests
+  </h5>
   <div
-    class="animate-fade-in-up min-w-full mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-lcdull flex flex-col dark:border-0"
+    class="animate-fade-in-up min-w-full text-center mt-3 px-4 pt-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-lcdull flex flex-col dark:border-0"
   >
     <div
       class="flex flex-col pb-10 justify-center space-y-5 text-gray-900 dark:text-white"
@@ -86,11 +88,11 @@
           <div>
             {#each requests as friend}
               <div
-                class="animate-fade-in-up flex justify-around items-center overflow-auto min-w-full mt-3 px-4 pt-4 max-w-sm bg-gray-100 border border-gray-300 rounded-lg shadow dark:bg-lc dark:border-0"
+                class="animate-fade-in-up grid grid-cols-3 justify-around items-center overflow-auto min-w-full mt-3 p-2 max-w-sm bg-gray-100 border border-gray-300 rounded-lg shadow dark:bg-lc dark:border-0"
               >
-                <div class="flex flex-col py-3">
+                <div class="flex flex-col py-3 space-y-2 col-span-2">
                   <span
-                    class="font-bold text-xs sm:text-2xl flex flex-col items-center pb-10 mr-1"
+                    class="font-bold text-xs sm:text-xl flex flex-col items-center pb-5 mr-1"
                     >{friend.mail}</span
                   >
                   <span class="text-xs"
@@ -100,8 +102,6 @@
                         {
                           month: "short",
                           day: "numeric",
-                          hour: "numeric",
-                          minute: "numeric",
                           hour12: false,
                         }
                       )}</span

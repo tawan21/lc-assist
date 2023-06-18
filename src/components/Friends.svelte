@@ -90,16 +90,16 @@
         <div>
           {#each friends as friend}
             <div
-              class="animate-fade-in-up flex justify-around items-center overflow-auto min-w-full mt-3 px-4 pt-4 max-w-sm bg-gray-100 border border-gray-300 rounded-lg shadow dark:bg-lc dark:border-0"
+              class="animate-fade-in-up grid grid-cols-3 justify-around items-center overflow-auto min-w-full mt-3 p-2 max-w-sm bg-gray-100 border border-gray-300 rounded-lg shadow dark:bg-lc dark:border-0"
             >
-              <div class="flex flex-col py-3">
+              <div class="flex flex-col py-3 space-y-2 col-span-2">
                 <span
-                  class="font-bold text-xs sm:text-2xl flex flex-col items-center pb-10 mr-1"
+                  class="font-bold text-xs sm:text-xl flex flex-col items-center pb-5 mr-1"
                   >{friend.mail}</span
                 >
-                <p class="text-xs sm:text-sm">
-                  <span class="font-semibold sm:text-lg">{ct[friend.mail]}</span> question(s)
-                  tried today
+                <p class="text-xs">
+                  <span class="font-semibold sm:text-sm">{ct[friend.mail]}</span
+                  > question(s) tried today
                 </p>
                 <span class="text-xs"
                   >added <span class="font-bold"
@@ -108,8 +108,6 @@
                       {
                         month: "short",
                         day: "numeric",
-                        hour: "numeric",
-                        minute: "numeric",
                         hour12: false,
                       }
                     )}</span
